@@ -26,7 +26,7 @@ For the both programs, you do not have to rename any slot, the script will detec
 
 #### Data Collection Program
 
-Simply copy the json configuration from the Master Program directory and paste it on a programming board in game.
+Simply copy the json configuration from the Data Collection Program directory and paste it on a programming board in game.
 
 This programming board must be connected to a databank.
 
