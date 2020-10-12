@@ -1,5 +1,9 @@
 # DU-Industry-HUD
- A simple HUD for monitoring and managing industry in Dual Universe
+A simple HUD for monitoring and managing industry in Dual Universe
+ 
+### Demo Video
+
+[![Demo Video](https://img.youtube.com/vi/T-t3QEe9SK4/0.jpg)](https://www.youtube.com/watch?v=T-t3QEe9SK4)
 
 # Installation
 
