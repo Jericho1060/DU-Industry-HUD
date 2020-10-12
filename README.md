@@ -18,7 +18,7 @@ This HUD is using two différent programs :
 - Master Program : the one that is displaying the HUD on the user screen
 - Data Collection Program : the one that gather informations from the industry
 
-It can permit to monitor a maximum of **648** Industry machines.
+It can permit to monitor a maximum of **1539** Industry machines.
 
 For the both programs, you do not have to rename any slot, the script will detect all the linked elements automatically.
 
