@@ -53,6 +53,28 @@ Modification required :
 
 in Unit > start you must edit the channel name for each machine type.
 
+```lua
+--[[
+	YOU CAN CHANGE CHANNELS NAMES HERE
+]]
+channels = {}
+channels['refiner'] = 'receiver_refiner'
+channels['assembly line'] = 'receiver_assembly'
+channels['smelter'] = 'receiver_smelters'
+channels['chemical industry'] = 'receiver_chemical'
+channels['electronics industry'] = 'receiver_electronics'
+channels['glass furnace'] = 'receiver_glass'
+channels['honeycomb refinery'] = 'receiver_honeycomb_recycler'
+channels['recycler'] = 'receiver_honeycomb_recycler'
+channels['metalwork industry'] = 'receiver_metalworks'
+channels['3d printer'] = 'receiver_3dprinters'
+channels['transfer unit'] = 'receiver_transfert'
+```
+
+You must set, for each machine type the channel (change the string after the `=`)
+
+You can use the same channel on several types if you do not have one receiver for each type.
+
 Each channel is used to refresh data from the selected machine type on the HUD only.
 
 #### Mounting Scheme
