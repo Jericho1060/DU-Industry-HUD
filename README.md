@@ -20,6 +20,8 @@ This HUD is using two différent programs :
 
 It can permit to monitor a maximum of 648 Industry machines.
 
+For the both programs, you do not have to rename any slot, the script will detect all the linked elements automatically.
+
 ### Installation
 
 #### Data Collection Program
