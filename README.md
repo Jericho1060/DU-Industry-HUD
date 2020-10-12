@@ -55,7 +55,7 @@ Each channel is used to refresh data from the selected machine type on the HUD o
 
 #### Mounting Scheme
 
-![Mounting Scheme](https://github.com/Jericho1060/DU-Industry-HUD/blob/main/ressources/images/DU_Industry_HUD_Mounting.jpg?raw=true)
+![Mounting Scheme](https://github.com/Jericho1060/DU-Industry-HUD/blob/main/ressources/images/DU_Industry_HUD_Mounting_2.jpg?raw=true)
 
 #### Options
 
