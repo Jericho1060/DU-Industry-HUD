@@ -45,7 +45,7 @@ Each channel is used to refresh data from the selected machine type on the HUD o
 
 #### Mounting Scheme
 
-!(Mounting Scheme)[https://drive.google.com/file/d/1l_ww7Xx-kIv-n_xmQy-eFXT1BzdSpowC/view?usp=sharing]
+![Mounting Scheme](https://drive.google.com/file/d/1l_ww7Xx-kIv-n_xmQy-eFXT1BzdSpowC/view?usp=sharing)
 
 #### Options
 
