@@ -18,7 +18,7 @@ This HUD is using two différent programs :
 - Master Program : the one that is displaying the HUD on the user screen
 - Data Collection Program : the one that gather informations from the industry
 
-It can permit to monitor a maximum of 729 Industry machines.
+It can permit to monitor a maximum of 648 Industry machines.
 
 ### Installation
 
@@ -43,7 +43,9 @@ See Mounting Scheme below for more details.
 
 Simply copy the json configuration from the Master Program directory and paste it on a programming board in game.
 
-This programming board must be connected to an emitter and to all the databanks used for Data Collection part.
+This programming board must be linked to the core.
+
+This programming board must be linked to an emitter and to all the databanks used for Data Collection part.
 
 Modification required :
 
