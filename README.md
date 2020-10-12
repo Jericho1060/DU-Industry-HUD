@@ -5,6 +5,10 @@ A simple HUD for monitoring and managing industry in Dual Universe
 
 [![Demo Video](https://img.youtube.com/vi/T-t3QEe9SK4/0.jpg)](https://www.youtube.com/watch?v=T-t3QEe9SK4)
 
+### Support or donation
+
+if you like it, ![Buy Me A Coffee](https://github.com/Jericho1060/DU-Industry-HUD/blob/main/ressources/images/ko-fi.png?raw=true)
+
 # Installation
 
 ### Introduction
