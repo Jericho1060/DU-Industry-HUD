@@ -18,7 +18,7 @@ This HUD is using two différent programs :
 - Master Program : the one that is displaying the HUD on the user screen
 - Data Collection Program : the one that gather informations from the industry
 
-It can permit to monitor a maximum of 648 Industry machines.
+It can permit to monitor a maximum of **648** Industry machines.
 
 For the both programs, you do not have to rename any slot, the script will detect all the linked elements automatically.
 
@@ -51,31 +51,13 @@ This programming board must be linked to an emitter and to all the databanks use
 
 Modification required :
 
-in Unit > start you must edit the channel name for each machine type.
-
-```lua
---[[
-	YOU CAN CHANGE CHANNELS NAMES HERE
-]]
-channels = {}
-channels['refiner'] = 'receiver_refiner'
-channels['assembly line'] = 'receiver_assembly'
-channels['smelter'] = 'receiver_smelters'
-channels['chemical industry'] = 'receiver_chemical'
-channels['electronics industry'] = 'receiver_electronics'
-channels['glass furnace'] = 'receiver_glass'
-channels['honeycomb refinery'] = 'receiver_honeycomb_recycler'
-channels['recycler'] = 'receiver_honeycomb_recycler'
-channels['metalwork industry'] = 'receiver_metalworks'
-channels['3d printer'] = 'receiver_3dprinters'
-channels['transfer unit'] = 'receiver_transfert'
-```
-
-You must set, for each machine type the channel (change the string after the `=`)
+In the LUA Parameters (right clic on the board > advanced > Edit lua parameters) you must set, for each machine type the channel configured on the receiver.
 
 You can use the same channel on several types if you do not have one receiver for each type.
 
 Each channel is used to refresh data from the selected machine type on the HUD only.
+
+If you see a machine type you do not have on your construct, just skip it, it will not be used.
 
 #### Mounting Scheme
 
