@@ -119,6 +119,7 @@ if hud_displayed == true then
             end
             elementData.type = elementType
             elementData.name = core.getElementNameById(elementData.id)
+            elementData.position = core.getElementPositionById(elementData.id)
             table.insert(refresh_id_list, elementData.id)
             table.insert(elements, elementData)
         end
@@ -162,7 +163,7 @@ if hud_displayed == true then
     	   <th>id</th>
             <th>Machine Name</th>
             <th>Cycles From Start</th>
-            <th>Efficacity</th>
+            <th>Efficiency</th>
             <th>Status</th>
             <th>Uptime</th>
         </tr>
