@@ -14,29 +14,29 @@ hud_main_css = [[
 	}
 	.hud_help_commands {
 		position: absolute;
-		top: 1vh;
-		left:3vw;
+		top: ]] .. tostring((10/1080)*100) .. [[vh;
+		left: ]] .. tostring((50/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_list_container {
 		position: absolute;
-		top: 11vh;
-		left:3vw;
+		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		left: ]] .. tostring((50/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machine_detail {
 		position: absolute;
-		top: 11vh;
-		right:24vw;
+		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		right: ]] .. tostring((450/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machines_container {
 		position: absolute;
-		top: 11vh;
-		left:16vw;
+		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		left: ]] .. tostring((300/1920)*100) .. [[vw;
 	}
 	.elementType {
 		margin-top:10px;
@@ -88,6 +88,7 @@ if hud_displayed == true then
     selected_type = elementsTypes[selected_index]
     elementsTypes = {}
     elements = {}
+    refresh_id_list = {}
     selectedElementsId = {}
     for _,id in pairs(elementsId) do
         elementType = core.getElementTypeById(id)
@@ -118,6 +119,7 @@ if hud_displayed == true then
             end
             elementData.type = elementType
             elementData.name = core.getElementNameById(elementData.id)
+            table.insert(refresh_id_list, elementData.id)
             table.insert(elements, elementData)
         end
     end

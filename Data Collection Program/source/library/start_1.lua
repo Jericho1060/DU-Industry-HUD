@@ -1,5 +1,6 @@
 --[[
-    split a string on a special character or string
+	split a string on a delimiter
+	By jericho
 ]]
 function strSplit(s, delimiter)
     result = {};
@@ -7,4 +8,17 @@ function strSplit(s, delimiter)
         table.insert(result, match);
     end
     return result;
+end
+
+--[[
+	check if a table contains an element
+	By Jericho
+]]
+function hasValue(tab, val)
+    for _,v in ipairs(tab) do
+        if v == val then
+            return true
+        end
+    end
+    return false
 end
