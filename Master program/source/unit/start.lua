@@ -43,7 +43,7 @@ for slot_name, slot in pairs(unit) do
         if slot.getElementClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
         end
-        if slot.getElementClass():lower() == 'coreunitstatic' then
+        if slot.getElementClass():lower():find("coreunit") then
             core = slot
         end
         if slot.getElementClass():lower() == 'emitterunit' then
