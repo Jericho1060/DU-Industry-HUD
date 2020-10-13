@@ -30,7 +30,7 @@ if databank ~= nil then
          local id = industries[i].getId()
     	local data = {}
          if databank.hasKey(id) == 1 then
-            data = json.decode(databank.getStringValue(id))
+            data = MyJson.parse(databank.getStringValue(id))
             if data.command ~= nil and data.command ~= "" then
                 if data.command:lower() == "start" then
                     industries[i].start()
@@ -57,7 +57,7 @@ if databank ~= nil then
          data.cyclesFromStart = industries[i].getCycleCountSinceStartup()
          data.efficiency = industries[i].getEfficiency()
          data.uptime = industries[i].getUptime()
-         local jsonData = json.encode(data)
+         local jsonData = MyJson.stringify(data)
          databank.setStringValue(id, jsonData)
     	--system.print(jsonData)
     end

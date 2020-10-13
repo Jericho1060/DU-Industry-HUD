@@ -1,4 +1,4 @@
-    local year, month, day, hour, minute, second = epochTime()
+local year, month, day, hour, minute, second = epochTime()
 local dateStr = year .. "/" .. month .. "/" .. day .. " " .. hour .. ":" .. minute .. ":" .. second
 if dateFormat:lower() == "fr" then
     dateStr = day .. "/" .. month .. "/" .. year .. " " .. hour .. ":" .. minute .. ":" .. second
@@ -14,29 +14,29 @@ hud_main_css = [[
 	}
 	.hud_help_commands {
 		position: absolute;
-		top: 10px;
-		left:50px;
+		top: 1vh;
+		left:3vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_list_container {
 		position: absolute;
-		top: 100px;
-		left:50px;
+		top: 11vh;
+		left:3vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machine_detail {
 		position: absolute;
-		top: 100px;
-		right:450px;
+		top: 11vh;
+		right:24vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machines_container {
 		position: absolute;
-		top: 100px;
-		left:300px;
+		top: 11vh;
+		left:16vw;
 	}
 	.elementType {
 		margin-top:10px;
@@ -114,7 +114,7 @@ if hud_displayed == true then
         if i >= minOnPage and i <= maxOnPage then
             elementType = core.getElementTypeById(elementData.id)
             if Storage.hasKey(elementData.id) == 1 then
-                elementData = json.decode(Storage.getStringValue(elementData.id))
+                elementData = MyJson.parse(Storage.getStringValue(elementData.id))
             end
             elementData.type = elementType
             elementData.name = core.getElementNameById(elementData.id)
