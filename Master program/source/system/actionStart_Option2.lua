@@ -10,7 +10,7 @@ for _,db in pairs(databanks) do
             command_2 = command_2 .. "_" .. craft_quantity
         end
         selected_machine.command = command_2
-        db.setStringValue(selected_machine.id, json.encode(selected_machine))
+        db.setStringValue(selected_machine.id, MyJson.stringify(selected_machine))
         if command_2:find("MAINTAIN") then command_2 = "MAINTAIN" end
         if command_2:find("BATCH") then command_2 = "BATCH" end
     end

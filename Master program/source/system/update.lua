@@ -1,4 +1,4 @@
-    local year, month, day, hour, minute, second = epochTime()
+local year, month, day, hour, minute, second = epochTime()
 local dateStr = year .. "/" .. month .. "/" .. day .. " " .. hour .. ":" .. minute .. ":" .. second
 if dateFormat:lower() == "fr" then
     dateStr = day .. "/" .. month .. "/" .. year .. " " .. hour .. ":" .. minute .. ":" .. second
@@ -14,29 +14,29 @@ hud_main_css = [[
 	}
 	.hud_help_commands {
 		position: absolute;
-		top: 10px;
-		left:50px;
+		top: ]] .. tostring((10/1080)*100) .. [[vh;
+		left: ]] .. tostring((50/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_list_container {
 		position: absolute;
-		top: 100px;
-		left:50px;
+		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		left: ]] .. tostring((50/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machine_detail {
 		position: absolute;
-		top: 100px;
-		right:450px;
+		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		right: ]] .. tostring((450/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machines_container {
 		position: absolute;
-		top: 100px;
-		left:300px;
+		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		left: ]] .. tostring((300/1920)*100) .. [[vw;
 	}
 	.elementType {
 		margin-top:10px;
@@ -88,6 +88,7 @@ if hud_displayed == true then
     selected_type = elementsTypes[selected_index]
     elementsTypes = {}
     elements = {}
+    refresh_id_list = {}
     selectedElementsId = {}
     for _,id in pairs(elementsId) do
         elementType = core.getElementTypeById(id)
@@ -114,10 +115,12 @@ if hud_displayed == true then
         if i >= minOnPage and i <= maxOnPage then
             elementType = core.getElementTypeById(elementData.id)
             if Storage.hasKey(elementData.id) == 1 then
-                elementData = json.decode(Storage.getStringValue(elementData.id))
+                elementData = MyJson.parse(Storage.getStringValue(elementData.id))
             end
             elementData.type = elementType
             elementData.name = core.getElementNameById(elementData.id)
+            elementData.position = core.getElementPositionById(elementData.id)
+            table.insert(refresh_id_list, elementData.id)
             table.insert(elements, elementData)
         end
     end
@@ -160,7 +163,7 @@ if hud_displayed == true then
     	   <th>id</th>
             <th>Machine Name</th>
             <th>Cycles From Start</th>
-            <th>Efficacity</th>
+            <th>Efficiency</th>
             <th>Status</th>
             <th>Uptime</th>
         </tr>

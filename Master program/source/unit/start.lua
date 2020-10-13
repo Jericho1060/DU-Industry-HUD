@@ -14,6 +14,10 @@ channel_for_metalwork = "receiver_metalworks" --export: receiver channel for upd
 channel_for_3d_printer = "receiver_3dprinters" --export: receiver channel for updating 3d printers
 channel_for_transfer = "receiver_transfert" --export: receiver channel for updating tranfer units
 
+refreshSpeed = 1 --export: the refresh speed of data in seconds
+elementsByPage = 20 --export: maximum amount of elements displayed on a single page
+dateFormat = "en" --export: the country code to format the date
+
 --[[
 	DO NOT CHANGE THE FOLLOWING
 ]]
@@ -86,7 +90,6 @@ end
 elementsTypes = removeDuplicatesInTable(elementsTypes)
 
 system.showScreen(1)
-refreshSpeed = 1 --export: the refresh speed of data in seconds
 unit.setTimer("refreshData", refreshSpeed)
 channel_index = 1
 selected_index = 1
@@ -99,9 +102,8 @@ Ctrl_pressed = false
 Alt_pressed = false
 craft_quantity = ""
 craft_quantity_digits = {"0","0","0","0","0","0","0","0"}
+refresh_id_list = {}
 craft_selected_digit = 1
 command_1 = ""
 command_2 = ""
 command_3 = ""
-elementsByPage = 20 --export: maximum amount of elements displayed on a single page
-dateFormat = "en" --export: the country code to format the date
