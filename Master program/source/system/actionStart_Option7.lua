@@ -1,0 +1,1 @@
+hud_displayed = not hud_displayed
