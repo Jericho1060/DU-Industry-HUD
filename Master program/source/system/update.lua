@@ -146,8 +146,6 @@ if hud_displayed == true then
     end
     hud_elements_type_list = hud_elements_type_list .. [[<div style="margin-top:10px;text-align:center;font-weight:bold;border-top:1px solid white;">&#x2193; &nbsp;&nbsp; Ctrl+Arrow Down</div></div>]]
     local minOnPage = ((page - 1) * elementsByPage) + 1
-    --local maxOnPage = page * elementsByPage
-    --local maxOnPage = page * elementsByPage
     if maxOnPage > #selectedElementsId then maxOnPage = #selectedElementsId end
     hud_machines = [[<div class="hud_machines_container hud_container">
     	<div style="text-align:center;font-weight:bold;border-bottom:1px solid white;">&#x2191; &nbsp;&nbsp; Arrow Up</div>
@@ -213,6 +211,38 @@ if hud_displayed == true then
     </div>]]
     if #elements > 0 then
         local selected_machine = elements[selected_machine_index]
+        local position = vec3(selected_machine.position)
+        local x =  position.x - coreOffset
+        local y =  position.y - coreOffset
+        local z =  position.z - coreOffset
+        if #markers == 0 then
+            table.insert(markers, core.spawnArrowSticker(x, y, z+2, "down"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z+2, "down"))
+            core.rotateSticker(markers[2],0,0,90)
+            table.insert(markers, core.spawnArrowSticker(x+1, y, z+1, "north"))
+            table.insert(markers, core.spawnArrowSticker(x+1, y, z+1, "north"))
+            core.rotateSticker(markers[4],90,90,0)
+            table.insert(markers, core.spawnArrowSticker(x-1, y, z+1, "south"))
+            table.insert(markers, core.spawnArrowSticker(x-1, y, z+1, "south"))
+            core.rotateSticker(markers[6],90,-90,0)
+            table.insert(markers, core.spawnArrowSticker(x, y-2, z+1, "east"))
+            table.insert(markers, core.spawnArrowSticker(x, y-2, z+1, "east"))
+            core.rotateSticker(markers[8],90,0,90)
+            table.insert(markers, core.spawnArrowSticker(x, y+2, z+1, "west"))
+            table.insert(markers, core.spawnArrowSticker(x, y+2, z+1, "west"))
+            core.rotateSticker(markers[10],-90,0,90)
+        else
+            core.moveSticker(markers[1], x, y, z+2)
+            core.moveSticker(markers[2], x, y, z+2)
+            core.moveSticker(markers[3], x+1, y, z+1)
+            core.moveSticker(markers[4], x+1, y, z+1)
+            core.moveSticker(markers[5], x-1, y, z+1)
+            core.moveSticker(markers[6], x-2, y, z+1)
+            core.moveSticker(markers[7], x, y-2, z+1)
+            core.moveSticker(markers[8], x, y-2, z+1)
+            core.moveSticker(markers[9], x, y+2, z+1)
+            core.moveSticker(markers[10], x, y+2, z+1)
+        end
         local status = "-"
         if selected_machine.status then status = selected_machine.status end
         local status_class = ""

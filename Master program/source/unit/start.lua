@@ -15,6 +15,7 @@ channel_for_3d_printer = "receiver_3dprinters" --export: receiver channel for up
 channel_for_transfer = "receiver_transfert" --export: receiver channel for updating tranfer units
 
 refreshSpeed = 1 --export: the refresh speed of data in seconds
+coreSize = "M" --export: the core size : XS, S, M or L
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
 
@@ -107,3 +108,8 @@ craft_selected_digit = 1
 command_1 = ""
 command_2 = ""
 command_3 = ""
+markers = {}
+coreOffset = 15.75
+if coreSize:lower() == "s" then coreOffset = 31.75 end
+if coreSize:lower() == "m" then coreOffset = 63.75 end
+if coreSize:lower() == "l" then coreOffset = 127.75 end

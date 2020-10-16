@@ -49,11 +49,10 @@ This programming board must be linked to the core.
 
 This programming board must be linked to an emitter and to all the databanks used for Data Collection part.
 
-Modification required :
+**Modification required :**
 
-In the LUA Parameters (right clic on the board > advanced > Edit lua parameters) you must set, for each machine type the channel configured on the receiver.
-
-You can use the same channel on several types if you do not have one receiver for each type.
+- In the LUA Parameters (right clic on the board > advanced > Edit lua parameters) you must set, for each machine type the channel configured on the receiver. You can use the same channel on several types if you do not have one receiver for each type.
+- Still in LUA Parameters : You must set the `coreSize` Parameters, by default set to M, you can set it to XS, S, M or L depending on your core Size, this is required to display the mark on the selected machine, otherwise, it will be displayed somewhere else.
 
 Each channel is used to refresh data from the selected machine type on the HUD only.
 
