@@ -15,7 +15,6 @@ channel_for_3d_printer = "receiver_3dprinters" --export: receiver channel for up
 channel_for_transfer = "receiver_transfert" --export: receiver channel for updating tranfer units
 
 refreshSpeed = 1 --export: the refresh speed of data in seconds
-coreSize = "M" --export: the core size : XS, S, M or L
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
 
@@ -58,13 +57,12 @@ for slot_name, slot in pairs(unit) do
 end
 Storage = bankhub:new(databanks)
 
---system.print(json.encode(Storage.getKeys()))
-
 elementsId = {}
 elements = {}
 elementsTypes = {}
 machines_count = {}
 machines_count.total = 0
+coreOffset = 16
 if core ~= nil and Storage then
 	elementsIdList = core.getElementIdList()
      for _,id in pairs(elementsIdList) do
@@ -84,6 +82,17 @@ if core ~= nil and Storage then
                 machines_count[elementType:lower()] = 1
             end
             table.insert(elementsId, id)
+        end
+        if elementType:find("core") then
+            --thx to Archaergeo for that
+            local hp = core.getElementHitPointsById(id)
+            if hp > 10000 then
+                coreOffset = 128
+            elseif hp > 1000 then
+                coreOffset = 64
+            elseif hp > 150 then
+                coreOffset = 32
+            end
         end
      end
 end
@@ -110,7 +119,3 @@ command_2 = ""
 command_3 = ""
 markers = {}
 refreshActivated = true
-coreOffset = 15.75
-if coreSize:lower() == "s" then coreOffset = 31.75 end
-if coreSize:lower() == "m" then coreOffset = 63.75 end
-if coreSize:lower() == "l" then coreOffset = 127.75 end
