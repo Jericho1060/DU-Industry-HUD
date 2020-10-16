@@ -109,6 +109,7 @@ command_1 = ""
 command_2 = ""
 command_3 = ""
 markers = {}
+refreshActivated = true
 coreOffset = 15.75
 if coreSize:lower() == "s" then coreOffset = 31.75 end
 if coreSize:lower() == "m" then coreOffset = 63.75 end

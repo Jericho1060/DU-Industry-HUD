@@ -1,0 +1,1 @@
+refreshActivated = not refreshActivated

@@ -21,21 +21,21 @@ hud_main_css = [[
 	}
 	.hud_list_container {
 		position: absolute;
-		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		top: ]] .. tostring((125/1080)*100) .. [[vh;
 		left: ]] .. tostring((50/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machine_detail {
 		position: absolute;
-		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		top: ]] .. tostring((125/1080)*100) .. [[vh;
 		right: ]] .. tostring((450/1920)*100) .. [[vw;
 		text-transform: uppercase;
 		font-weight: bold;
 	}
 	.hud_machines_container {
 		position: absolute;
-		top: ]] .. tostring((100/1080)*100) .. [[vh;
+		top: ]] .. tostring((125/1080)*100) .. [[vh;
 		left: ]] .. tostring((300/1920)*100) .. [[vw;
 	}
 	.elementType {
@@ -66,6 +66,11 @@ hud_main_css = [[
 </style>
 ]]
 
+local refreshStatusText = [[<span class="text-success">Disable Data Collection</span>]]
+if refreshActivated == false then
+    refreshStatusText = [[<span class="text-danger">Enable Data Collection</span>]]
+end
+
 hud_help_command = [[<div class="hud_help_commands hud_container">
 	<table>
 		<tr>
@@ -76,6 +81,10 @@ hud_help_command = [[<div class="hud_help_commands hud_container">
 		<tr>
 			<td>Show/Hide HUD</td>
 			<th style="text-align:right;">Alt+7</th>
+		</tr>
+		<tr>
+			<td>]] .. refreshStatusText .. [[</td>
+			<th style="text-align:right;">Alt+8</th>
 		</tr>
 	</table>
 </div>]]
