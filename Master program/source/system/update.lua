@@ -237,7 +237,7 @@ if hud_displayed == true then
             core.moveSticker(markers[3], x+1, y, z+1)
             core.moveSticker(markers[4], x+1, y, z+1)
             core.moveSticker(markers[5], x-1, y, z+1)
-            core.moveSticker(markers[6], x-2, y, z+1)
+            core.moveSticker(markers[6], x-1, y, z+1)
             core.moveSticker(markers[7], x, y-2, z+1)
             core.moveSticker(markers[8], x, y-2, z+1)
             core.moveSticker(markers[9], x, y+2, z+1)
