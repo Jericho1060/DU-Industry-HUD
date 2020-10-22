@@ -58,6 +58,13 @@ Each channel is used to refresh data from the selected machine type on the HUD o
 If you see a machine type you do not have on your construct, just skip it, it will not be used.
 You can also set the same channel on several machine types if you are using on receiver for several machines types.
 
+#### Container and hub monitoring
+
+To enable a container for the monitoring, you must rename it.
+The name must start by `MONIT_` followed by the name of the item inside
+Only one item by container is working as is it still not possible to determine all items inside a container.
+If the item is not valid or can't be found, the item type display will be "error".
+
 #### Mounting Scheme
 
 ![Mounting Scheme](https://github.com/Jericho1060/DU-Industry-HUD/blob/main/ressources/images/DU_Industry_HUD_Mounting_2.jpg?raw=true)
