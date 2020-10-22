@@ -13,7 +13,8 @@ channel_for_recycler = "receiver_honeycomb_recycler" --export: receiver channel 
 channel_for_metalwork = "receiver_metalworks" --export: receiver channel for updating metalworks
 channel_for_3d_printer = "receiver_3dprinters" --export: receiver channel for updating 3d printers
 channel_for_transfer = "receiver_transfert" --export: receiver channel for updating tranfer units
-
+enableTransferMonitoring = true --export: enable or diable the transfer units monitoring
+enableContainerMonitoring = true --export: enable or diable the containers and hubs monitoring
 refreshSpeed = 1 --export: the refresh speed of data in seconds
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
@@ -74,7 +75,8 @@ if core ~= nil and Storage then
            elementType == "recycler" or
            elementType:find("refiner") or
            elementType:find("industry") or
-           elementType == "transfer unit"
+           elementType == "transfer unit" or
+           (elementType:find("container") and enableContainerMonitoring == true)
         then
             if machines_count[elementType:lower()] ~= nil then
                 machines_count[elementType:lower()] = machines_count[elementType:lower()] + 1
@@ -84,7 +86,7 @@ if core ~= nil and Storage then
             table.insert(elementsId, id)
         end
         if elementType:find("core") then
-            --thx to Archaergeo for that
+            --thx to Archargo for that
             local hp = core.getElementHitPointsById(id)
             if hp > 10000 then
                 coreOffset = 128
