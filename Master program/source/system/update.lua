@@ -111,7 +111,7 @@ if hud_displayed == true then
         if selected_type == elementType then
             if
                 (elementType:lower():find("container") and elementName:find("monit_"))
-                or (not elementType:find("container"))
+                or (not elementType:lower():find("container"))
             then
                 table.insert(selectedElementsId, id)
             end
