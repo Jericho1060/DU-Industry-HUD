@@ -65,6 +65,11 @@ The name must start by `MONIT_` followed by the name of the item inside
 Only one item by container is working as is it still not possible to determine all items inside a container.
 If the item is not valid or can't be found, the item type display will be "error".
 
+Important parameters for storage (in lua parameters):
+- container_proficiency_lvl: Talent level for Container Proficiency
+- container_fill_red_level: The percent fill below gauge will be red
+- container_fill_yellow_level: The percent fill below gauge will be yellow
+
 #### Mounting Scheme
 
 ![Mounting Scheme](https://github.com/Jericho1060/DU-Industry-HUD/blob/main/ressources/images/DU_Industry_HUD_Mounting_2.jpg?raw=true)
