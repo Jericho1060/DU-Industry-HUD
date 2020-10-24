@@ -63,6 +63,12 @@ hud_main_css = [[
 	.text-warning{color:#ffc107;}
 	.text-info{color:#17a2b8;}
 	.text-primary{color:#007bff;}
+	.text-orangered{color:orangered;}
+	.bg-success{background-color: #28a745;}
+	.bg-danger{background-color:#dc3545;}
+	.bg-warning{background-color:#ffc107;}
+	.bg-info{background-color:#17a2b8;}
+	.bg-primary{background-color:#007bff;}
 </style>
 ]]
 
@@ -189,7 +195,13 @@ if hud_displayed == true then
                <th>Unit Mass</th>
         	  <th>Total Mass</th>
         	  <th>Amount of Items</th>
-            </tr>
+            ]]
+            if not elementsTypes[selected_index]:lower():find("hub") then
+            	hud_machines = hud_machines .. [[
+            		<th>Container Fill</th>
+            	]]
+            end
+            hud_machines = hud_machines .. [[</tr>
         ]]
         for i, element in pairs(elements) do
             local splittedName = strSplit(element.name, "_")
@@ -198,20 +210,27 @@ if hud_displayed == true then
             if element.id then machine_id = element.id end
             local container_size = "hub"
             local container_empty_mass = 0
-            if not element.type:find("hub") then
+            local container_volume = 0
+            local contentQuantity = 0
+            local ingredient = getIngredient(cleanName(itemName))
+            if not element.type:lower():find("hub") then
                 local containerMaxHP = core.getElementMaxHitPointsById(element.id)
                 if containerMaxHP > 17000 then
                     container_size = "L"
                     container_empty_mass = getIngredient("Container L").mass
+                    container_volume = 128000 * (container_proficiency_lvl * 0.1) + 128000
                 elseif containerMaxHP > 7900 then
                     container_size = "M"
                     container_empty_mass = getIngredient("Container M").mass
+                    container_volume = 64000 * (container_proficiency_lvl * 0.1) + 64000
                 elseif containerMaxHP > 900 then
                     container_size = "S"
                     container_empty_mass = getIngredient("Container S").mass
+                    container_volume = 8000 * (container_proficiency_lvl * 0.1) + 8000
                 else
                     container_size = "XS"
                     container_empty_mass = getIngredient("Container XS").mass
+                    container_volume = 8000 * (container_proficiency_lvl * 0.1) + 8000
                 end
             end
             local totalMass = core.getElementMassById(element.id)
@@ -222,7 +241,11 @@ if hud_displayed == true then
                 contentMass = math.ceil(contentMass/10)/100
                 contentMassUnit = "T"
             end
-            local ingredient = getIngredient(cleanName(itemName))
+            contentQuantity = contentMassKg / ingredient.mass
+            local contentPercent = 0
+            if not element.type:lower():find("hub") then
+                contentPercent = math.floor((ingredient.volume * contentQuantity)*100/container_volume)
+            end
             hud_machines = hud_machines .. [[<tr]]
             if selected_machine_index == i then
                 hud_machines = hud_machines .. [[ class="selected"]]
@@ -234,9 +257,27 @@ if hud_displayed == true then
             	   <td>]] .. ingredient.type .. [[</td>
             	   <td>]] .. ingredient.mass .. [[</td>
             	   <td>]] .. contentMass .. " " .. contentMassUnit .. [[</td>
-            	   <td>]] .. math.ceil(contentMassKg / ingredient.mass) .. [[</td>
-                </tr>
+            	   <td>]] .. utils.round(contentQuantity) .. [[</td>
             ]]
+            if not element.type:lower():find("hub") then
+                 local gauge_color_class = "bg-success"
+                 local text_color_class = ""
+                 if contentPercent < container_fill_red_level then
+                    gauge_color_class = "bg-danger"
+                 elseif  contentPercent < container_fill_yellow_level then
+                    gauge_color_class = "bg-warning"
+                    text_color_class = "text-orangered"
+                 end
+            	hud_machines = hud_machines .. [[
+                	  <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
+                            <div class="]] .. gauge_color_class .. [[" style="width:]] .. contentPercent .. [[%;">&nbsp;</div>
+                            <div class="]] .. text_color_class .. [[" style="position:absolute;width:100%;top:0;padding-top:5px;font-weight:bold;">
+                                ]] .. contentPercent .. [[%
+                            </div>
+                       </th>
+                    </tr>
+                ]]
+            end
         end
     else
         hud_machines = hud_machines  .. [[
@@ -324,20 +365,20 @@ if hud_displayed == true then
             end
         end
         if #markers == 0 then
-            table.insert(markers, core.spawnArrowSticker(x, y, z + offset25 + offsetFromCenter, "down"))
-            table.insert(markers, core.spawnArrowSticker(x, y, z + offset25 + offsetFromCenter, "down"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z, "down"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z, "down"))
             core.rotateSticker(markers[2],0,0,90)
-            table.insert(markers, core.spawnArrowSticker(x + offset1 + offsetFromCenter, y, z + offset15, "north"))
-            table.insert(markers, core.spawnArrowSticker(x + offset1 + offsetFromCenter, y, z + offset15, "north"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "north"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "north"))
             core.rotateSticker(markers[4],90,90,0)
-            table.insert(markers, core.spawnArrowSticker(x - offset1 - offsetFromCenter, y, z + offset15, "south"))
-            table.insert(markers, core.spawnArrowSticker(x - offset1 - offsetFromCenter, y, z + offset15, "south"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "south"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "south"))
             core.rotateSticker(markers[6],90,-90,0)
-            table.insert(markers, core.spawnArrowSticker(x, y - offset2 - offsetFromCenter, z + offset15, "east"))
-            table.insert(markers, core.spawnArrowSticker(x, y - offset2 - offsetFromCenter, z + offset15, "east"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "east"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "east"))
             core.rotateSticker(markers[8],90,0,90)
-            table.insert(markers, core.spawnArrowSticker(x, y + offset2 + offsetFromCenter, z + offset15, "west"))
-            table.insert(markers, core.spawnArrowSticker(x, y + offset2 + offsetFromCenter, z + offset15, "west"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "west"))
+            table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "west"))
             core.rotateSticker(markers[10],-90,0,90)
         else
             core.moveSticker(markers[1], x, y, z + offset25 + offsetFromCenter)
