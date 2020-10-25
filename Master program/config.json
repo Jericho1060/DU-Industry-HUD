@@ -103,7 +103,7 @@
       "key": "0"
     },
     {
-      "code": "if emitter ~= nil and #elementsTypes > 0 then\n    for _,db in pairs(databanks) do\n        db.setStringValue(\"refresh_id_list\", MyJson.stringify(refresh_id_list))\n    end\n    if refreshActivated == true then\n    \temitter.send(channels[elementsTypes[selected_index]:lower()], \"\")\n    end\nend\n",
+      "code": "if emitter ~= nil and #elementsTypes > 0 then\n    for _,db in pairs(databanks) do\n        for _,id in pairs(refresh_id_list) do\n        \tdb.setIntValue(\"refresh_\" .. tostring(id), 1)\n        end\n    end\n    if refreshActivated == true then\n    \temitter.send(channels[elementsTypes[selected_index]:lower()], \"\")\n    end\nend\n",
       "filter": {
         "args": [
           {

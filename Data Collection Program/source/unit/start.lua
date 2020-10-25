@@ -27,8 +27,11 @@ for slot_name, slot in pairs(unit) do
 end
 if databank ~= nil then
     local refresh_id_list = {}
-    if databank.hasKey("refresh_id_list") then
-        refresh_id_list = MyJson.parse(databank.getStringValue("refresh_id_list"))
+    for _,slot in pairs(industries) do
+        local slot_id = slot.getId()
+        if databank.hasKey("refresh_" .. tostring(slot_id)) then
+            table.insert(refresh_id_list, slot_id)
+        end
     end
     for i = 1, #industries, 1 do
          local id = industries[i].getId()
@@ -42,11 +45,15 @@ if databank ~= nil then
                     elseif data.command:lower():find("maintain") then
                         local splitted = strSplit(data.command, "_")
                         local quantity = tonumber(splitted[2])
-                        industries[i].startAndMaintain(quantity)
+                        if quantity == 0 then industries[i].startAndMaintain()
+                        else industries[i].startAndMaintain(quantity)
+                        end
                     elseif data.command:lower():find("batch") then
                         local splitted = strSplit(data.command, "_")
                         local quantity = tonumber(splitted[2])
-                        industries[i].batchStart(quantity)
+                        if quantity == 0 then industries[i].batchStart()
+                        else industries[i].batchStart(quantity)
+                        end
                     elseif data.command:lower() == "stop" then
                         industries[i].hardStop(0)
                     elseif data.command:lower() == "soft_stop" then
