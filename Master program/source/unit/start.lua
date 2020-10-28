@@ -16,6 +16,16 @@ channel_for_transfer = "receiver_transfert" --export: receiver channel for updat
 container_proficiency_lvl = 0 --export: Talent level for Container Proficiency
 container_fill_red_level = 10 --export: The percent fill below gauge will be red
 container_fill_yellow_level = 50 --export: The percent fill below gauge will be yellow
+enableRefinerMonitoring = true --export: enable or diable the transfer units monitoring
+enableAssemblyMonitoring = true --export: enable or diable the transfer units monitoring
+enableSmelterMonitoring = true --export: enable or diable the transfer units monitoring
+enableChemicalMonitoring = true --export: enable or diable the transfer units monitoring
+enableElectronicsMonitoring = true --export: enable or diable the transfer units monitoring
+enableGlassMonitoring = true --export: enable or diable the transfer units monitoring
+enableHoneycombMonitoring = true --export: enable or diable the transfer units monitoring
+enableRecyclerMonitoring = true --export: enable or diable the transfer units monitoring
+enableMetalworkMonitoring = true --export: enable or diable the transfer units monitoring
+enable3DPrinterMonitoring = true --export: enable or diable the transfer units monitoring
 enableTransferMonitoring = true --export: enable or diable the transfer units monitoring
 enableContainerMonitoring = true --export: enable or diable the containers and hubs monitoring
 refreshSpeed = 1 --export: the refresh speed of data in seconds
@@ -71,14 +81,21 @@ if core ~= nil and Storage then
 	elementsIdList = core.getElementIdList()
      for _,id in pairs(elementsIdList) do
         elementType = core.getElementTypeById(id):lower()
-        if elementType == "assembly line" or
-           elementType == "glass furnace" or
-           elementType == "3d printer" or
-           elementType == "smelter" or
-           elementType == "recycler" or
-           elementType:find("refiner") or
-           elementType:find("industry") or
-           elementType == "transfer unit" or
+        if (elementType == "assembly line" and enableAssemblyMonitoring == true) or
+           (elementType == "glass furnace" and enableGlassMonitoring == true) or
+           (elementType == "3d printer" and enable3DPrinterMonitoring == true) or
+           (elementType == "smelter" and enableSmelterMonitoring == true) or
+           (elementType == "recycler" and enableRecyclerMonitoring == true) or
+           (elementType:find("refinery") and enableHoneycombMonitoring == true) or
+           (elementType == "refiner" and enableRefinerMonitoring == true) or
+           (elementType:find("industry")
+                and (
+                    (elementType:find("chemical") and enableChemicalMonitoring == true) or
+                    (elementType:find("electronics") and enableElectronicsMonitoring == true) or
+                    (elementType:find("metalwork") and enableMetalworkMonitoring == true)
+                )
+            ) or
+           (elementType == "transfer unit" and enableTransferMonitoring == true) or
            (elementType:find("container") and enableContainerMonitoring == true)
         then
             if machines_count[elementType:lower()] ~= nil then
