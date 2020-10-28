@@ -230,7 +230,7 @@ if hud_displayed == true then
                 else
                     container_size = "XS"
                     container_empty_mass = getIngredient("Container XS").mass
-                    container_volume = 8000 * (container_proficiency_lvl * 0.1) + 8000
+                    container_volume = 1000 * (container_proficiency_lvl * 0.1) + 1000
                 end
             end
             local totalMass = core.getElementMassById(element.id)
