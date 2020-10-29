@@ -209,7 +209,7 @@ if hud_displayed == true then
             local machine_id = "-"
             if element.id then machine_id = element.id end
             local container_size = "hub"
-            local container_empty_mass = 0
+            local container_empty_mass = getIngredient("Container Hub").mass
             local container_volume = 0
             local contentQuantity = 0
             local ingredient = getIngredient(cleanName(itemName))
