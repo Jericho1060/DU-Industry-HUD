@@ -3,7 +3,7 @@ A simple HUD for monitoring and managing industry in Dual Universe
 
 # Discord Server
 
-You can join me on Discord for help or suggestions or requests by folowwing that link : https://discord.jericho1060.com
+You can join me on Discord for help or suggestions or requests by folowing that link : https://discord.jericho1060.com
  
 ### Demo Video
 
