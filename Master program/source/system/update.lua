@@ -243,7 +243,9 @@ if hud_displayed == true then
             end
             contentQuantity = contentMassKg / ingredient.mass
             local contentPercent = 0
-            if not element.type:lower():find("hub") then
+            if (not element.type:lower():find("hub")) --not a hub
+                and (not ingredient.type:lower():find("error")) --not item not found
+            then
                 contentPercent = math.floor((ingredient.volume * contentQuantity)*100/container_volume)
             end
             hud_machines = hud_machines .. [[<tr]]
@@ -268,6 +270,14 @@ if hud_displayed == true then
                     gauge_color_class = "bg-warning"
                     text_color_class = "text-orangered"
                  end
+                if ingredient.type:lower():find("error") then
+                    hud_machines = hud_machines .. [[
+                	  <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
+                            -
+                       </th>
+                    </tr>
+                	]]
+                else
             	hud_machines = hud_machines .. [[
                 	  <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
                             <div class="]] .. gauge_color_class .. [[" style="width:]] .. contentPercent .. [[%;">&nbsp;</div>
@@ -277,6 +287,7 @@ if hud_displayed == true then
                        </th>
                     </tr>
                 ]]
+                end
             end
         end
     else
