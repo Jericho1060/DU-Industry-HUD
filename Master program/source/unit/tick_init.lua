@@ -1,6 +1,6 @@
 --load all the machines from the core step by step to avoid CPU Load Errors
 
-maxAmountOfElementsLoadedBySecond = 500 --export: if cpu load errors at start, lower that value
+maxAmountOfElementsLoadedBySecond = 2500 --export: if cpu load errors at start, lower that value
 
 local maxForLoop = initIndex + maxAmountOfElementsLoadedBySecond
 if maxForLoop > #elementsIdList then maxForLoop = #elementsIdList end
