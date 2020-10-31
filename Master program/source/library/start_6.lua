@@ -18,6 +18,14 @@ function getIngredient(name)
         ingredient = Ingredients['pure' .. cleanname:gsub('pure', '')]
     end
     if not ingredient then
+        for key,value in pairs(Ingredients) do
+            if key:find(cleanname) then
+                ingredient = value
+                break
+            end
+        end
+    end
+    if not ingredient then
         --system.print('Error [Ingredient not found]: '..name)
         ingredient = Ingredients['unknown']
     end
