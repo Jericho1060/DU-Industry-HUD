@@ -12,9 +12,13 @@ end
 
 -- return an ingredient fron it's name
 function getIngredient(name)
-    ingredient = Ingredients[cleanName(name)]
+    local cleanname = cleanName(name)
+    local ingredient = Ingredients[cleanname]
+    if not ingredient and cleanname:find('pure') then
+        ingredient = Ingredients['pure' .. cleanname:gsub('pure', '')]
+    end
     if not ingredient then
-        system.print('Error [Ingredient not found]: '..name)
+        --system.print('Error [Ingredient not found]: '..name)
         ingredient = Ingredients['unknown']
     end
     return ingredient
