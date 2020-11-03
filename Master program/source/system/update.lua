@@ -14,29 +14,29 @@ hud_main_css = [[
         }
         .hud_help_commands {
             position: absolute;
-            top: ]] .. tostring((10/1080)*100) .. [[vh;
-            left: ]] .. tostring((50/1920)*100) .. [[vw;
+            top: ]] .. tostring((10 / 1080) * 100) .. [[vh;
+            left: ]] .. tostring((50 / 1920) * 100) .. [[vw;
             text-transform: uppercase;
             font-weight: bold;
         }
         .hud_list_container {
             position: absolute;
-            top: ]] .. tostring((125/1080)*100) .. [[vh;
-            left: ]] .. tostring((50/1920)*100) .. [[vw;
+            top: ]] .. tostring((125 / 1080) * 100) .. [[vh;
+            left: ]] .. tostring((50 / 1920) * 100) .. [[vw;
             text-transform: uppercase;
             font-weight: bold;
         }
         .hud_machine_detail {
             position: absolute;
-            top: ]] .. tostring((125/1080)*100) .. [[vh;
-            right: ]] .. tostring((450/1920)*100) .. [[vw;
+            top: ]] .. tostring((125 / 1080) * 100) .. [[vh;
+            right: ]] .. tostring((450 / 1920) * 100) .. [[vw;
             text-transform: uppercase;
             font-weight: bold;
         }
         .hud_machines_container {
             position: absolute;
-            top: ]] .. tostring((125/1080)*100) .. [[vh;
-            left: ]] .. tostring((300/1920)*100) .. [[vw;
+            top: ]] .. tostring((125 / 1080) * 100) .. [[vh;
+            left: ]] .. tostring((300 / 1920) * 100) .. [[vw;
         }
         .elementType {
             margin-top:10px;
@@ -106,41 +106,35 @@ if initIndex >= #elementsIdList then
         elements = {}
         refresh_id_list = {}
         selectedElementsId = {}
-        for _,id in pairs(elementsId) do
+        for _, id in pairs(elementsId) do
             elementType = core.getElementTypeById(id)
             local elementName = core.getElementNameById(id):lower()
-            if
-                (elementType:lower():find("container") and elementName:find("monit_"))
-                or (not elementType:lower():find("container"))
-            then
+            if (elementType:lower():find("container") and elementName:find("monit_"))
+                    or (not elementType:lower():find("container")) then
                 table.insert(elementsTypes, elementType)
             end
             if selected_type == elementType then
-                if
-                    (elementType:lower():find("container") and elementName:find("monit_"))
-                    or (not elementType:lower():find("container"))
-                then
+                if (elementType:lower():find("container") and elementName:find("monit_"))
+                        or (not elementType:lower():find("container")) then
                     table.insert(selectedElementsId, id)
                 end
             end
         end
         elementsTypes = removeDuplicatesInTable(elementsTypes)
-        table.sort(elementsTypes, function(a,b) return a:lower() < b:lower() end)
+        table.sort(elementsTypes, function(a, b) return a:lower() < b:lower() end)
         maxPage = math.ceil(#selectedElementsId / elementsByPage)
 
         local minOnPage = ((page - 1) * elementsByPage) + 1
         local maxOnPage = page * elementsByPage
         local temp_elements_for_sorting = {}
-        for i,id in pairs(selectedElementsId) do
+        for i, id in pairs(selectedElementsId) do
             elementData = {}
             elementData.id = id
             elementData.name = core.getElementNameById(id)
             table.insert(temp_elements_for_sorting, elementData)
         end
-        --sorting by name
-        table.sort(temp_elements_for_sorting, function(a,b) return a.name:lower() < b.name:lower() end)
-        --only get data from displayed elements
-        for i,elementData in pairs(temp_elements_for_sorting) do
+        table.sort(temp_elements_for_sorting, function(a, b) return a.name:lower() < b.name:lower() end)
+        for i, elementData in pairs(temp_elements_for_sorting) do
             if i >= minOnPage and i <= maxOnPage then
                 elementType = core.getElementTypeById(elementData.id)
                 if Storage.hasKey(elementData.id) == 1 then
@@ -166,7 +160,7 @@ if initIndex >= #elementsIdList then
             hud_elements_type_list = hud_elements_type_list .. [[">
                 <table style="width:100%;">
                     <tr>
-                        <th style="text-align:left;border-bottom:none;">]].. elementType .. [[</th>
+                        <th style="text-align:left;border-bottom:none;">]] .. elementType .. [[</th>
                         <td style="text-align:right;border-bottom:none;">]] .. count .. [[</td>
                     </tr>
                 </table>
@@ -187,7 +181,7 @@ if initIndex >= #elementsIdList then
             </table>
             <table class="elements_table" style="width:100%;">]]
         if elementsTypes[selected_index]:lower():find("container") then
-            hud_machines = hud_machines  .. [[
+            hud_machines = hud_machines .. [[
                 <tr>
                    <th>id</th>
                    <th>Item Name</th>
@@ -197,12 +191,12 @@ if initIndex >= #elementsIdList then
                   <th>Total Mass</th>
                   <th>Amount of Items</th>
                 ]]
-                if not elementsTypes[selected_index]:lower():find("hub") then
-                    hud_machines = hud_machines .. [[
+            if not elementsTypes[selected_index]:lower():find("hub") then
+                hud_machines = hud_machines .. [[
                         <th>Container Fill</th>
                     ]]
-                end
-                hud_machines = hud_machines .. [[</tr>
+            end
+            hud_machines = hud_machines .. [[</tr>
             ]]
             for i, element in pairs(elements) do
                 local splittedName = strSplit(element.name, "_")
@@ -239,15 +233,14 @@ if initIndex >= #elementsIdList then
                 local contentMass = contentMassKg
                 local contentMassUnit = "Kg"
                 if contentMass > 1000 then
-                    contentMass = math.ceil(contentMass/10)/100
+                    contentMass = math.ceil(contentMass / 10) / 100
                     contentMassUnit = "T"
                 end
                 contentQuantity = contentMassKg / ingredient.mass
                 local contentPercent = 0
                 if (not element.type:lower():find("hub")) --not a hub
-                    and (not ingredient.type:lower():find("error")) --not item not found
-                then
-                    contentPercent = math.floor((ingredient.volume * contentQuantity)*100/container_volume)
+                        and (not ingredient.type:lower():find("error")) --not item not found then
+                    contentPercent = math.floor((ingredient.volume * contentQuantity) * 100 / container_volume)
                 end
                 hud_machines = hud_machines .. [[<tr]]
                 if selected_machine_index == i then
@@ -263,24 +256,24 @@ if initIndex >= #elementsIdList then
                        <td>]] .. utils.round(contentQuantity) .. [[</td>
                 ]]
                 if not element.type:lower():find("hub") then
-                     local gauge_color_class = "bg-success"
-                     local text_color_class = ""
-                     if contentPercent < container_fill_red_level then
+                    local gauge_color_class = "bg-success"
+                    local text_color_class = ""
+                    if contentPercent < container_fill_red_level then
                         gauge_color_class = "bg-danger"
-                     elseif  contentPercent < container_fill_yellow_level then
+                    elseif contentPercent < container_fill_yellow_level then
                         gauge_color_class = "bg-warning"
                         text_color_class = "text-orangered"
-                     end
+                    end
                     if ingredient.type:lower():find("error") then
                         hud_machines = hud_machines .. [[
-                          <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
+                          <th style="position:relative;width: ]] .. tostring((150 / 1920) * 100) .. [[vw;">
                                 -
                            </th>
                         </tr>
                         ]]
                     else
-                    hud_machines = hud_machines .. [[
-                          <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
+                        hud_machines = hud_machines .. [[
+                          <th style="position:relative;width: ]] .. tostring((150 / 1920) * 100) .. [[vw;">
                                 <div class="]] .. gauge_color_class .. [[" style="width:]] .. contentPercent .. [[%;">&nbsp;</div>
                                 <div class="]] .. text_color_class .. [[" style="position:absolute;width:100%;top:0;padding-top:5px;font-weight:bold;">
                                     ]] .. contentPercent .. [[%
@@ -292,7 +285,7 @@ if initIndex >= #elementsIdList then
                 end
             end
         else
-            hud_machines = hud_machines  .. [[
+            hud_machines = hud_machines .. [[
                 <tr>
                    <th>id</th>
                     <th>Machine Name</th>
@@ -303,8 +296,6 @@ if initIndex >= #elementsIdList then
                 </tr>
             ]]
             for i, element in pairs(elements) do
-                --system.print(json.encode(element))
-                --system.print(elementType[selected_index])
                 local status = "-"
                 if element.status then status = element.status end
                 local status_class = ""
@@ -316,7 +307,7 @@ if initIndex >= #elementsIdList then
                 local cyclesFromStart = "-"
                 if element.cyclesFromStart then cyclesFromStart = element.cyclesFromStart end
                 local efficiency = "-"
-                if element.efficiency then efficiency = math.floor(element.efficiency*100) end
+                if element.efficiency then efficiency = math.floor(element.efficiency * 100) end
                 local uptime = 0
                 if element.uptime then uptime = math.floor(element.uptime) end
                 hud_machines = hud_machines .. [[<tr]]
@@ -348,6 +339,7 @@ if initIndex >= #elementsIdList then
         </div>]]
         if #elements > 0 then
             local selected_machine = elements[selected_machine_index]
+            --Special Thx to Rutik for his help on how to get the exact the position of the element
             local position = vec3(selected_machine.position)
             local x = position.x - coreOffset
             local y = position.y - coreOffset
@@ -357,7 +349,6 @@ if initIndex >= #elementsIdList then
             local offset2 = 2
             local offset25 = 2.5
             local offsetFromCenter = 0
-            --system.print(selected_machine.type)
             if selected_machine.type:lower():find("container") then
                 offset1 = 0
                 offset15 = 0
@@ -379,19 +370,19 @@ if initIndex >= #elementsIdList then
             if #markers == 0 then
                 table.insert(markers, core.spawnArrowSticker(x, y, z, "down"))
                 table.insert(markers, core.spawnArrowSticker(x, y, z, "down"))
-                core.rotateSticker(markers[2],0,0,90)
+                core.rotateSticker(markers[2], 0, 0, 90)
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "north"))
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "north"))
-                core.rotateSticker(markers[4],90,90,0)
+                core.rotateSticker(markers[4], 90, 90, 0)
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "south"))
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "south"))
-                core.rotateSticker(markers[6],90,-90,0)
+                core.rotateSticker(markers[6], 90, -90, 0)
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "east"))
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "east"))
-                core.rotateSticker(markers[8],90,0,90)
+                core.rotateSticker(markers[8], 90, 0, 90)
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "west"))
                 table.insert(markers, core.spawnArrowSticker(x, y, z + offset15, "west"))
-                core.rotateSticker(markers[10],-90,0,90)
+                core.rotateSticker(markers[10], -90, 0, 90)
             else
                 core.moveSticker(markers[1], x, y, z + offset25 + offsetFromCenter)
                 core.moveSticker(markers[2], x, y, z + offset25 + offsetFromCenter)
@@ -456,7 +447,7 @@ if initIndex >= #elementsIdList then
                                         <th>&#x2190; &nbsp;&nbsp; Alt+<br>Arrow Left</th>
                                         <th style="font-size:20px;">
                     ]]
-                    for digit_index,digit in pairs(craft_quantity_digits) do
+                    for digit_index, digit in pairs(craft_quantity_digits) do
                         if digit_index == (#craft_quantity_digits - craft_selected_digit + 1) then
                             hud_machine_detail = hud_machine_detail .. [[<span class="text-success">]]
                         end
@@ -495,7 +486,6 @@ if initIndex >= #elementsIdList then
                             <th>ALT+2</th>
                         </tr>
                     ]]
-
                 end
                 hud_machine_detail = hud_machine_detail .. [[</table></div>]]
             end
@@ -507,7 +497,7 @@ else
         <div class="hud_list_container hud_container">
         	<table style="width:100%">
         		<tr>
-        			<th>LOADING ]] .. math.floor(initIndex*100/#elementsIdList) .. [[% ...</th>
+        			<th>LOADING ]] .. math.floor(initIndex * 100 / #elementsIdList) .. [[% ...</th>
         		</tr>
         	</table>
         </div>

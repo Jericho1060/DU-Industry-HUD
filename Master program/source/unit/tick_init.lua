@@ -35,7 +35,8 @@ for i = initIndex, maxForLoop, 1 do
             table.insert(elementsId, id)
         end
         if elementType:find("core") then
-            --thx to Archargo for that
+            --thx to Archaego for the idea of getting the core size by HP
+            --thx to Rutik for the offset values
             local hp = core.getElementHitPointsById(id)
             if hp > 10000 then
                 coreOffset = 128
