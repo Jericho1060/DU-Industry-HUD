@@ -229,18 +229,20 @@ if initIndex >= #elementsIdList then
                     end
                 end
                 local totalMass = core.getElementMassById(element.id)
-                local contentMassKg = math.ceil(totalMass - container_empty_mass)
+                local contentMassKg = totalMass - container_empty_mass
                 local contentMass = contentMassKg
                 local contentMassUnit = "Kg"
                 if contentMass > 1000 then
-                    contentMass = math.ceil(contentMass / 10) / 100
+                    contentMass = contentMass/1000
                     contentMassUnit = "T"
                 end
+                contentMass = utils.round(contentMass*100)/100
                 contentQuantity = contentMassKg / ingredient.mass
                 local contentPercent = 0
                 if (not element.type:lower():find("hub")) --not a hub
-                        and (not ingredient.type:lower():find("error")) --not item not found then
-                    contentPercent = math.floor((ingredient.volume * contentQuantity) * 100 / container_volume)
+                        and (not ingredient.type:lower():find("error")) --not item not found
+                then
+                    contentPercent = math.floor((ingredient.volume * contentQuantity)*100/container_volume)
                 end
                 hud_machines = hud_machines .. [[<tr]]
                 if selected_machine_index == i then
@@ -253,7 +255,7 @@ if initIndex >= #elementsIdList then
                        <td>]] .. ingredient.type .. [[</td>
                        <td>]] .. ingredient.mass .. [[</td>
                        <td>]] .. contentMass .. " " .. contentMassUnit .. [[</td>
-                       <td>]] .. utils.round(contentQuantity) .. [[</td>
+                       <td>]] .. utils.round(contentQuantity*100)/100 .. [[</td>
                 ]]
                 if not element.type:lower():find("hub") then
                     local gauge_color_class = "bg-success"
