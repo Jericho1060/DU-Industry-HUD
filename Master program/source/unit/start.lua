@@ -28,6 +28,7 @@ enableMetalworkMonitoring = true --export: enable or disable the Metalworks moni
 enable3DPrinterMonitoring = true --export: enable or disable the 3D Printers monitoring
 enableTransferMonitoring = true --export: enable or disable the transfer units monitoring
 enableContainerMonitoring = true --export: enable or disable the containers and hubs monitoring
+containerMonitoringPrefix = "MONIT_" --export: the prefix used to enable container monitoring
 refreshSpeed = 1 --export: the refresh speed of data in seconds
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
@@ -79,7 +80,7 @@ machines_count.total = 0
 coreOffset = 16
 initIndex = 1
 if core ~= nil and Storage then
-	elementsIdList = core.getElementIdList()
+    elementsIdList = core.getElementIdList()
     unit.setTimer("init",1)
 end
 
