@@ -6,13 +6,20 @@
 
 -- clean the name from specific char, etc.
 function cleanName(name)
-    name = string.gsub(name:lower(), "-", "")
+    if name ~= nil and name:len() > 0 then
+        name = string.gsub(name:lower(), "-", "")
+    else
+        name = "unknown"
+    end
     return name:gsub("%s+", "")
 end
 
 -- return an ingredient fron it's name
 function getIngredient(name)
-    local cleanname = cleanName(name)
+    local cleanname = "unknown"
+    if name ~= nil and name:len() > 0 then
+        cleanname = cleanName(name)
+    end
     local ingredient = Ingredients[cleanname]
     if not ingredient and cleanname:find('pure') then
         ingredient = Ingredients['pure' .. cleanname:gsub('pure', '')]

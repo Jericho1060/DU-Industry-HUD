@@ -32,6 +32,7 @@ containerMonitoringPrefix = "MONIT_" --export: the prefix used to enable contain
 refreshSpeed = 1 --export: the refresh speed of data in seconds
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
+maxAmountOfElementsLoadedBySecond = 2500 --export: if cpu load errors at start, lower that value
 
 --[[
 	DO NOT CHANGE THE FOLLOWING
@@ -55,9 +56,9 @@ core = nil
 emitter = nil
 for slot_name, slot in pairs(unit) do
     if
-        type(slot) == "table"
-        and type(slot.export) == "table"
-        and slot.getElementClass
+    type(slot) == "table"
+            and type(slot.export) == "table"
+            and slot.getElementClass
     then
         if slot.getElementClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
@@ -79,8 +80,10 @@ machines_count = {}
 machines_count.total = 0
 coreOffset = 16
 initIndex = 1
+listIndex = 1
 if core ~= nil and Storage then
     elementsIdList = core.getElementIdList()
+    --system.print(#elementsIdList)
     unit.setTimer("init",1)
 end
 
@@ -106,3 +109,5 @@ command_2 = ""
 command_3 = ""
 markers = {}
 refreshActivated = true
+hud_help_command = ""
+unit.setTimer("helperRefresh",1)
