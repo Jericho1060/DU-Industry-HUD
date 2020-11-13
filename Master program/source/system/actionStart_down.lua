@@ -5,6 +5,7 @@ if Ctrl_pressed == true and Alt_pressed == false then
         page = 1
         Storage.clear()
         craft_quantity_digits = {"0","0","0","0","0","0","0","0"}
+        selectedElementsId = {}
     end
 elseif Alt_pressed == true and Ctrl_pressed == false then
     local digit_index = #craft_quantity_digits - craft_selected_digit + 1
