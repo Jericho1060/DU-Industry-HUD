@@ -17,3 +17,7 @@ if you like it, [<img src="https://github.com/Jericho1060/DU-Industry-HUD/blob/m
 
 - FR: https://github.com/Jericho1060/DU-Industry-HUD/wiki/FR
 - EN : https://github.com/Jericho1060/DU-Industry-HUD/wiki/EN
+
+# other linked project
+
+- [du-storage-monitoring](https://github.com/Jericho1060/du-storage-monitoring) : A simple storage monitoring for screen that display container and hubs percent fill and items quantity and can stack the quantity of several containers and/or hubs.
