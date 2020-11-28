@@ -3,7 +3,7 @@ A simple HUD for monitoring and managing industry in Dual Universe
 
 # Guilded Server (better than Discord)
 
-You can join me on Guilded for help or suggestions or requests by following that link : https://www.guilded.gg/i/0k8OBQX2
+You can join me on Guilded for help or suggestions or requests by following that link : https://guilded.jericho1060.com
  
 ### Demo Video
 
