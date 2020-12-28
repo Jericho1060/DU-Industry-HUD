@@ -1,19 +1,10 @@
 --[[
-	Industry Icons Library By Baby Dragon (Discord: [BOO] Baby Dragon#6186)
+	Clock script from Leodr, modified and updated by Jericho
+	original script: https://github.com/leodr99/DU-quick_n_dirty-scripts/blob/main/clock/clock.lua
 ]]
-Icons_Base_Url = "assets.prod.novaquark.com/"
-Icons = {}
-Icons['refiner'] = Icons_Base_Url .. "94277/0888fb10-596a-44bb-aabc-c560ae38c644.png"
-Icons['assembly line'] = Icons_Base_Url .. "94277/6e4b89a5-967f-408d-b15a-d1d011362c99.png"
-Icons['smelter'] = Icons_Base_Url .. "94277/8192839e-88e8-45f0-8871-6efa47721dba.png"
-Icons['chemical industry'] = Icons_Base_Url .. "94277/9abda2cf-895e-4814-9641-05447d4487e0.png"
-Icons['electronics industry'] = Icons_Base_Url .. "30036/8b9b65c4-52d9-474a-bf96-b54484036374.png"
-Icons['glass furnace'] = Icons_Base_Url .. "94277/136a6ba3-dbc3-4aed-9095-a3185bb7415f.png"
-Icons['honeycomb refinery'] = Icons_Base_Url .. "66035/8daa2d79-7899-425d-82a7-b8296043dd71.png"
-Icons['recycler'] = Icons_Base_Url .. "94277/3a0e13ad-4c64-4b3b-9220-9e8784ca88a0.png"
-Icons['metalwork industry'] = Icons_Base_Url .. "30036/b560b54b-3cfc-4818-8b19-306d6ec5972d.png"
-Icons['3d printer'] = Icons_Base_Url .. "66035/f5a14aaf-4cda-4b20-8685-d74197922f5d.png"
-Icons['transfer unit'] = Icons_Base_Url .. "66035/3dce9941-26ab-41ca-90ee-b55975c35a50.png"
-Icons['container'] = Icons_Base_Url .. "30036/153c9b47-1065-4ff5-a32e-08fc970ba197.png"
-Icons['container L'] = Icons_Base_Url .. "30036/2d99f857-9095-4dc8-8034-48847111904f.png"
-Icons['container hub'] = Icons_Base_Url .. "66035/7edb7051-d34a-41da-a100-ba924edc8faf.png"
+--Globals
+local outputTime = false --for debug
+local summertime = false --export: summer time enabled
+--
+--//functions
+function epochTime()function rZ(a)if string.len(a)<=1 then return\"0\"..a else return a end end;function dPoint(b)if not(b==math.floor(b))then return true else return false end end;function lYear(year)if not dPoint(year/4)then if dPoint(year/100)then return true else if not dPoint(year/400)then return true else return false end end else return false end end;local c=5;local d=3600;local e=86400;local f=31536000;local g=31622400;local h=2419200;local i=2505600;local j=2592000;local k=2678400;local l={4,6,9,11}local m={1,3,5,7,8,10,12}local n=0;local o=1506816000;local p={\"Tur,\",\"Fri,\",\"Sat,\",\"Sun,\",\"Mon,\",\"Tue,\",\"Wed,\"}local q=system.getTime()if summertime==true then q=q+3600 end;now=math.floor(q+o)year=1970;secs=0;n=0;while secs+g<now or secs+f<now do if lYear(year+1)then if secs+g<now then secs=secs+g;year=year+1;n=n+366 end else if secs+f<now then secs=secs+f;year=year+1;n=n+365 end end end;secondsRemaining=now-secs;monthSecs=0;yearlYear=lYear(year)month=1;while monthSecs+h<secondsRemaining or monthSecs+j<secondsRemaining or monthSecs+k<secondsRemaining do if month==1 then if monthSecs+k<secondsRemaining then month=2;monthSecs=monthSecs+k;n=n+31 else break end end;if month==2 then if not yearlYear then if monthSecs+h<secondsRemaining then month=3;monthSecs=monthSecs+h;n=n+28 else break end else if monthSecs+i<secondsRemaining then month=3;monthSecs=monthSecs+i;n=n+29 else break end end end;if month==3 then if monthSecs+k<secondsRemaining then month=4;monthSecs=monthSecs+k;n=n+31 else break end end;if month==4 then if monthSecs+j<secondsRemaining then month=5;monthSecs=monthSecs+j;n=n+30 else break end end;if month==5 then if monthSecs+k<secondsRemaining then month=6;monthSecs=monthSecs+k;n=n+31 else break end end;if month==6 then if monthSecs+j<secondsRemaining then month=7;monthSecs=monthSecs+j;n=n+30 else break end end;if month==7 then if monthSecs+k<secondsRemaining then month=8;monthSecs=monthSecs+k;n=n+31 else break end end;if month==8 then if monthSecs+k<secondsRemaining then month=9;monthSecs=monthSecs+k;n=n+31 else break end end;if month==9 then if monthSecs+j<secondsRemaining then month=10;monthSecs=monthSecs+j;n=n+30 else break end end;if month==10 then if monthSecs+k<secondsRemaining then month=11;monthSecs=monthSecs+k;n=n+31 else break end end;if month==11 then if monthSecs+j<secondsRemaining then month=12;monthSecs=monthSecs+j;n=n+30 else break end end end;day=1;daySecs=0;daySecsRemaining=secondsRemaining-monthSecs;while daySecs+e<daySecsRemaining do day=day+1;daySecs=daySecs+e;n=n+1 end;hour=0;hourSecs=0;hourSecsRemaining=daySecsRemaining-daySecs;while hourSecs+d<hourSecsRemaining do hour=hour+1;hourSecs=hourSecs+d end;minute=0;minuteSecs=0;minuteSecsRemaining=hourSecsRemaining-hourSecs;while minuteSecs+60<minuteSecsRemaining do minute=minute+1;minuteSecs=minuteSecs+60 end;second=math.floor(now%60)year=rZ(year)month=rZ(month)day=rZ(day)hour=rZ(hour)minute=rZ(minute)second=rZ(second)remanderForDOW=n%7;DOW=p[remanderForDOW]if outputTime then str=\"Year: \"..year..\", Month: \"..month..\", Day: \"..day..\", Hour: \"..hour..\", Minute: \"..minute..\", Second: \"..second..\", Day of Week: \"..DOW;system.print(str)end;return year,month,day,hour,minute,second,DOW end

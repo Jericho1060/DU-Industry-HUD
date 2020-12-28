@@ -6,38 +6,38 @@
 bankhub = {}
 
 function bankhub:new(banks)
-  o = {}
-  setmetatable(o, self);
-  self.__index = self;
-  o.banks = banks or {}
+    o = {}
+    setmetatable(o, self);
+    self.__index = self;
+    o.banks = banks or {}
 
-  -- databank shortcuts to allow in-game syntax.
-  function o.clear()                    return o:_clear() end
-  function o.getNbKeys()                return o:_getNbKeys() end
-  function o.getKeys()                  return o:_getKeys() end
-  function o.hasKey(key)                return o:_hasKey(key) end
-  function o.getStringValue(key)        return o:_getStringValue(key) end
-  function o.getIntValue(key)           return o:_getIntValue(key) end
-  function o.getFloatValue(key)         return o:_getFloatValue(key) end
+    -- databank shortcuts to allow in-game syntax.
+    function o.clear()                    return o:_clear() end
+    function o.getNbKeys()                return o:_getNbKeys() end
+    function o.getKeys()                  return o:_getKeys() end
+    function o.hasKey(key)                return o:_hasKey(key) end
+    function o.getStringValue(key)        return o:_getStringValue(key) end
+    function o.getIntValue(key)           return o:_getIntValue(key) end
+    function o.getFloatValue(key)         return o:_getFloatValue(key) end
 
-  return o
+    return o
 end
 --- Adds another databank to the raid.
 --- @param object The databank unit to add.
 function bankhub:add(element)
-  table.insert( self.banks, element)
-  self.banks_size = #self.banks
+    table.insert( self.banks, element)
+    self.banks_size = #self.banks
 end
 --- Clears the databank array
 function bankhub:_clear()
-  for _,bank in pairs(self.banks) do bank.clear() end
+    for _,bank in pairs(self.banks) do bank.clear() end
 end
 --- Returns the number of keys in the entire databank table
 --- @return integer number of total keys
 function bankhub:_getNbKeys()
-  local res = 0
-  for _,bank in pairs(self.banks) do res = res + bank.getNbKeys() end
-  return res
+    local res = 0
+    for _,bank in pairs(self.banks) do res = res + bank.getNbKeys() end
+    return res
 end
 
 --- Returns all the keys in the databank array
@@ -65,34 +65,34 @@ end
 --- @param string key
 --- @return string returns value or nil
 function bankhub:_getStringValue(key)
-  for _,bank in pairs(self.banks) do
-    if (bank.hasKey(key) == 1) then
-      return bank.getStringValue(key)
+    for _,bank in pairs(self.banks) do
+        if (bank.hasKey(key) == 1) then
+            return bank.getStringValue(key)
+        end
     end
-  end
-  return nil
+    return nil
 end
 
 --- Returns the integer value of the key if existing
 --- @param string key
 --- @return number returns value or nil
 function bankhub:_getIntValue(key)
-  for _,bank in pairs(self.banks) do
-    if (bank.hasKey(key) == 1) then
-      return banks.getIntValue(key)
+    for _,bank in pairs(self.banks) do
+        if (bank.hasKey(key) == 1) then
+            return banks.getIntValue(key)
+        end
     end
-  end
-  return nil
+    return nil
 end
 
 --- Returns the float value of the key if existing
 --- @param string key
 --- @return number returns value or nil
 function bankhub:_getFloatValue(key)
-  for _,bank in pairs(self.banks) do
-    if (bank.hasKey(key) == 1) then
-      return banks.getFloatValue(key)
+    for _,bank in pairs(self.banks) do
+        if (bank.hasKey(key) == 1) then
+            return banks.getFloatValue(key)
+        end
     end
-  end
-  return nil
+    return nil
 end

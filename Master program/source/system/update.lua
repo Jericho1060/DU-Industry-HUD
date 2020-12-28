@@ -68,6 +68,7 @@ hud_main_css = [[
 
 if initIndex >= #elementsIdList then
     unit.stopTimer("init")
+    --system.print(MyJson.stringify(allTypes))
     if not isTimerStarted then
         isTimerStarted = true
         unit.setTimer("buildLists",1)
@@ -85,38 +86,43 @@ if initIndex >= #elementsIdList then
         hud_machines = ""
         hud_machine_detail = ""
 
+        minOnPage = ((page - 1) * elementsByPage) + 1
+        maxOnPage = page * elementsByPage
+
+        elements = {}
+        refresh_id_list = {}
+        local temp_elements_for_sorting = {}
+        for i,id in pairs(selectedElementsId) do
+            elementData = {}
+            elementData.id = id
+            elementData.name = core.getElementNameById(id)
+            table.insert(temp_elements_for_sorting, elementData)
+        end
+        table.sort(temp_elements_for_sorting, function(a,b) return a.name:lower() < b.name:lower() end)
+        for i,elementData in pairs(temp_elements_for_sorting) do
+            if i >= minOnPage and i <= maxOnPage then
+                elementType = core.getElementTypeById(elementData.id)
+                --if Storage.hasKey(elementData.id) == 1 then
+                --    elementData = MyJson.parse(Storage.getStringValue(elementData.id))
+                --end
+                elementData.type = elementType
+                elementData.name = core.getElementNameById(elementData.id)
+                elementData.position = core.getElementPositionById(elementData.id)
+                --elementData.status = core.getElementIndustryStatus(elementData.id)
+
+                table.insert(refresh_id_list, elementData.id)
+                table.insert(elements, elementData)
+            end
+        end
+
         if hud_displayed == true then
             selected_type = elementsTypes[selected_index]
-            elements = {}
-            refresh_id_list = {}
 
-            local minOnPage = ((page - 1) * elementsByPage) + 1
-            local maxOnPage = page * elementsByPage
-            local temp_elements_for_sorting = {}
-            for i,id in pairs(selectedElementsId) do
-                elementData = {}
-                elementData.id = id
-                elementData.name = core.getElementNameById(id)
-                table.insert(temp_elements_for_sorting, elementData)
-            end
-            table.sort(temp_elements_for_sorting, function(a,b) return a.name:lower() < b.name:lower() end)
-            for i,elementData in pairs(temp_elements_for_sorting) do
-                if i >= minOnPage and i <= maxOnPage then
-                    elementType = core.getElementTypeById(elementData.id)
-                    if Storage.hasKey(elementData.id) == 1 then
-                        elementData = MyJson.parse(Storage.getStringValue(elementData.id))
-                    end
-                    elementData.type = elementType
-                    elementData.name = core.getElementNameById(elementData.id)
-                    elementData.position = core.getElementPositionById(elementData.id)
-                    table.insert(refresh_id_list, elementData.id)
-                    table.insert(elements, elementData)
-                end
-            end
             hud_elements_type_list = [[<div class="hud_list_container hud_container">
                 <div style="text-align:center;font-weight:bold;border-bottom:1px solid white;">&#x2191; &nbsp;&nbsp; Ctrl+Arrow Up</div>
             ]]
             for i, elementType in pairs(elementsTypes) do
+                --system.print(elementType)
                 hud_elements_type_list = hud_elements_type_list .. [[<div class="elementType]]
                 if i == selected_index then
                     hud_elements_type_list = hud_elements_type_list .. " selected"
@@ -126,11 +132,8 @@ if initIndex >= #elementsIdList then
                 hud_elements_type_list = hud_elements_type_list .. [[">
                     <table style="width:100%;">
                         <tr>
-                		  <!--<th style="border-bottom:none;">
-                			 <img src="]] .. Icons[elementType:lower()] .. [[" style="width:20px;">
-                		  </th>-->
                             <th style="text-align:left;border-bottom:none;">]].. elementType .. [[</th>
-                            <td style="text-align:right;border-bottom:none;">]] .. count .. [[</td>
+                            <td style="text-align:right;border-bottom:none;">]] .. tostring(count) .. [[</td>
                         </tr>
                     </table>
                 </div>
@@ -263,13 +266,39 @@ if initIndex >= #elementsIdList then
                     <tr>
                        <th>id</th>
                         <th>Machine Name</th>
+                	   <th>Selected Recipe</th>
                         <th>Cycles From Start</th>
-                        <th>Efficiency</th>
                         <th>Status</th>
-                        <th>Uptime</th>
+                        <th>Mode</th>
+                        <th>Time Remaining</th>
                     </tr>
                 ]]
                 for i, element in pairs(elements) do
+                    local statusData = json.decode(core.getElementIndustryStatus(element.id))
+                    local recipeName = "-"
+                    if loadedRecipes[statusData.schematicId] then
+                        recipeName = loadedRecipes[statusData.schematicId]
+                    else
+                        if has_value(recipeToLoad,statusData.schematicId) == false then
+                            table.insert(recipeToLoad, statusData.schematicId)
+                        end
+                    end
+                    local remainingTime = 0
+                    if (statusData) and (statusData.remainingTime) and (statusData.remainingTime <= (3600*24*365)) then
+                        remainingTime = statusData.remainingTime
+                    end
+                    element.recipeName = recipeName
+                    element.remainingTime = remainingTime
+                    element.status = statusData.state
+                    element.unitsProduced = statusData.unitsProduced
+                    local mode = ""
+                    element.maintainProductAmount = statusData.maintainProductAmount
+                    element.batchesRequested = statusData.batchesRequested
+                    if statusData.maintainProductAmount > 0 then
+                        mode = "Maintain " .. statusData.maintainProductAmount
+                    elseif statusData.batchesRequested > 0 and statusData.batchesRequested <= 99999999 then
+                        mode = "Produce " .. statusData.batchesRequested
+                    end
                     local status = "-"
                     if element.status then status = element.status end
                     local status_class = ""
@@ -278,25 +307,22 @@ if initIndex >= #elementsIdList then
                     if status:lower():find("jammed") then status_class = "text-danger" end
                     if status:lower():find("pending") then status_class = "text-primary" end
                     status = status:gsub("JAMMED_", ""):gsub("_", " ")
-                    local cyclesFromStart = "-"
-                    if element.cyclesFromStart then cyclesFromStart = element.cyclesFromStart end
-                    local efficiency = "-"
-                    if element.efficiency then efficiency = math.floor(element.efficiency*100) end
-                    local uptime = 0
-                    if element.uptime then uptime = math.floor(element.uptime) end
                     hud_machines = hud_machines .. [[<tr]]
                     if selected_machine_index == i then
                         hud_machines = hud_machines .. [[ class="selected"]]
                     end
                     local machine_id = "-"
                     if element.id then machine_id = element.id end
+                    local unitsProduced = 0
+                    if element.unitsProduced then unitsProduced = element.unitsProduced end
                     hud_machines = hud_machines .. [[>
                             <th>]] .. machine_id .. [[</th>
                             <th class="]] .. status_class .. [[">]] .. element.name .. [[</th>
-                            <td>]] .. cyclesFromStart .. [[</td>
-                            <td>]] .. efficiency .. [[%</td>
+                            <th>]] .. recipeName .. [[</th>
+                            <td>]] .. unitsProduced .. [[</td>
                             <th class="]] .. status_class .. [[">]] .. status .. [[</th>
-                            <td class="]] .. status_class .. [[">]] .. SecondsToClockString(uptime) .. [[</td>
+                		  <th>]] .. mode .. [[</th>
+                            <td class="]] .. status_class .. [[">]] .. SecondsToClockString(element.remainingTime) .. [[</td>
                         </tr>
                     ]]
                 end
@@ -369,7 +395,7 @@ if initIndex >= #elementsIdList then
                     core.moveSticker(markers[9], x, y + offset2 + offsetFromCenter, z + offset15)
                     core.moveSticker(markers[10], x, y + offset2 + offsetFromCenter, z + offset15)
                 end
-                if not selected_machine.type:lower():find("container") then
+                if (not selected_machine.type:lower():find("container")) and (enableRemoteControl == true) then
                     local status = "-"
                     if selected_machine.status then status = selected_machine.status end
                     local status_class = ""
@@ -412,31 +438,37 @@ if initIndex >= #elementsIdList then
                                 <th rowspan="2">
                                     <table>
                                         <tr>
-                                            <th colspan="3">&#x2191; &nbsp;&nbsp; Alt+Arrow Up</th>
-                                        </tr>
-                                        <tr>
                                             <th colspan="3">Quantity:</th>
                                         </tr>
                                         <tr>
-                                            <th>&#x2190; &nbsp;&nbsp; Alt+<br>Arrow Left</th>
                                             <th style="font-size:20px;">
                         ]]
+                        local has_quantity = false
+                        for k,v in pairs(craft_quantity_digits) do
+                            if tonumber(v) > 0 then
+                                has_quantity = true
+                            end
+                        end
+                        if not has_quantity then
+                            local value = "0"
+                            if selected_machine.maintainProductAmount > 0 then
+                                --mode = "Maintain " .. selected_machine.maintainProductAmount
+                                value = tostring(selected_machine.maintainProductAmount)
+                            elseif selected_machine.batchesRequested > 0 and selected_machine.batchesRequested <= 99999999 then
+                                --mode = "Produce " .. selected_machine.batchesRequested
+                                value = tostring(selected_machine.batchesRequested)
+                            end
+                            for i = #value, 1, -1 do
+                                local c = value:sub(i,i)
+                                craft_quantity_digits[9-(#value-(i-1))] = c
+                            end
+                        end
                         for digit_index,digit in pairs(craft_quantity_digits) do
-                            if digit_index == (#craft_quantity_digits - craft_selected_digit + 1) then
-                                hud_machine_detail = hud_machine_detail .. [[<span class="text-success">]]
-                            end
                             hud_machine_detail = hud_machine_detail .. digit
-                            if digit_index == (#craft_quantity_digits - craft_selected_digit + 1) then
-                                hud_machine_detail = hud_machine_detail .. [[</span>]]
-                            end
                         end
                         hud_machine_detail = hud_machine_detail .. [[
                                         </th>
-                                        <th>Alt+ &nbsp;&nbsp; &#x2192;<br>Arrow Right</th>
                                      </tr>
-                                        <tr>
-                                            <th colspan="3" style="border-bottom:none;">&#x2193; &nbsp;&nbsp; Alt+Arrow Down</th>
-                                        </tr>
                                     </table>
                                 </th>
                                 <th>ALT+2</th>
