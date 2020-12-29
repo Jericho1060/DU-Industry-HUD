@@ -1,7 +1,7 @@
 --[[
     Jericho's time script -- https://github.com/Jericho1060
     Display IRL time in game
-    https://github.com/Jericho1060/DualUniverse/tree/master/TimeScript
+    https://github.com/Jericho1060/DualUniverse/blob/master/TimeScript/IRLHourScript.lua
 ]]--
 
 
