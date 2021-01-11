@@ -2,6 +2,17 @@
 	receivers channels for each type of machine
 ]]
 
+local version = "RC 2.0.0 - update 2"
+
+system.print("==================================================")
+local print_version_str = ""
+local print_version_number = math.ceil((50-#version-2)/2)
+for i=1, print_version_number, 1 do print_version_str = print_version_str .. '=' end
+print_version_str = print_version_str .. " " .. version .. " "
+for i=1, print_version_number, 1 do print_version_str = print_version_str .. '=' end
+system.print(print_version_str)
+system.print("==================================================")
+
 channel_for_refiner = "receiver_refiner" --export: receiver channel to send orders to refiners
 channel_for_assembly = "receiver_assembly" --export: receiver channel to send orders to assembly lines
 channel_for_smelter = "receiver_smelters" --export: receiver channel to send orders to smelters
