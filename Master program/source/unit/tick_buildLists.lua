@@ -1,8 +1,6 @@
 local maxForLoop = listIndex + maxAmountOfElementsLoadedBySecond
 if maxForLoop > #elementsId then maxForLoop = #elementsId end
 
-selectedElementsId = {}
-elementsTypes = {}
 for i = listIndex, maxForLoop, 1 do
     listIndex = i
     local id = elementsId[i]
@@ -26,6 +24,7 @@ for i = listIndex, maxForLoop, 1 do
     end
 end
 elementsTypes = removeDuplicatesInTable(elementsTypes)
+selectedElementsId = removeDuplicatesInTable(selectedElementsId)
 table.sort(elementsTypes, function(a,b) return a:lower() < b:lower() end)
 maxPage = math.ceil(#selectedElementsId / elementsByPage)
 if listIndex >= #elementsId then listIndex = 1 end

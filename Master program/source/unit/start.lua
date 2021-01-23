@@ -2,7 +2,7 @@
 	receivers channels for each type of machine
 ]]
 
-local version = "RC 2.0.0 - update 2"
+local version = "RC 2.0.0 - update 3"
 
 system.print("==================================================")
 local print_version_str = ""
