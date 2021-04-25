@@ -18,7 +18,7 @@ function DUCurrentDateTime()
     local weekDaysShortNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
     local monthNames = {"January", "Febuary", "March", "April", "May", "June", "July", "August", "Septrember", "October", "Novermber", "December"}
     local monthShortNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
-    if summer_time then time = time + 1 end
+    if summer_time then time = time + secondsInHour end
     time = time - seconds_to_2018
     local weekDayIndex = math.floor(time/secondsInDay)%7
     if weekDayIndex == 0 then weekDayIndex = 7 end
