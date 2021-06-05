@@ -2,7 +2,7 @@
 	receivers channels for each type of machine
 ]]
 
-local version = "RC 2.0.0 - update 3"
+local version = "RC 2.0.0 - update 5"
 
 system.print("==================================================")
 local print_version_str = ""
@@ -47,6 +47,7 @@ elementsByPage = 20 --export: maximum amount of elements displayed on a single p
 dateFormat = "en" --export: the country code to format the date
 maxAmountOfElementsLoadedBySecond = 2000 --export: if cpu load errors at start, lower that value
 maxAmountOfRecipeLoadedBySecond = 10 --export: if cpu load errors on page load, lower that value
+contentFontSize = 15 --export: size of the font of the content of all pannels in pixels
 
 --[[
 	DO NOT CHANGE THE FOLLOWING
@@ -70,9 +71,9 @@ core = nil
 emitter = nil
 for slot_name, slot in pairs(unit) do
     if
-    type(slot) == "table"
-            and type(slot.export) == "table"
-            and slot.getElementClass
+        type(slot) == "table"
+        and type(slot.export) == "table"
+        and slot.getElementClass
     then
         if slot.getElementClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
@@ -106,8 +107,8 @@ initIndex = 1
 listIndex = 1
 elementsIdList = {}
 if core ~= nil and Storage then
-    elementsIdList = core.getElementIdList()
-    unit.setTimer("init",1)
+	elementsIdList = core.getElementIdList()
+     unit.setTimer("init",1)
 end
 
 elementsTypes = removeDuplicatesInTable(elementsTypes)

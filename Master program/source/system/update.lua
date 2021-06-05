@@ -1,5 +1,8 @@
 hud_main_css = [[
     <style>
+	   * {
+		  font-size: ]] .. tostring(contentFontSize) .. [[px;
+	   }
         .hud_container {
             border: 2px solid orange;
             border-radius:10px;
@@ -22,8 +25,8 @@ hud_main_css = [[
         }
         .hud_machine_detail {
             position: absolute;
-            top: ]] .. tostring((125/1080)*100) .. [[vh;
-            right: ]] .. tostring((450/1920)*100) .. [[vw;
+            top: ]] .. tostring((250/1080)*100) .. [[vh;
+            right: ]] .. tostring((50/1920)*100) .. [[vw;
             text-transform: uppercase;
             font-weight: bold;
         }
@@ -164,12 +167,12 @@ if initIndex >= #elementsIdList then
                       <th>Total Mass</th>
                       <th>Amount of Items</th>
                     ]]
-                if not elementsTypes[selected_index]:lower():find("hub") then
-                    hud_machines = hud_machines .. [[
+                    if not elementsTypes[selected_index]:lower():find("hub") then
+                        hud_machines = hud_machines .. [[
                             <th>Container Fill</th>
                         ]]
-                end
-                hud_machines = hud_machines .. [[</tr>
+                    end
+                    hud_machines = hud_machines .. [[</tr>
                 ]]
                 for i, element in pairs(elements) do
                     local splittedName = strSplit(element.name, "_")
@@ -214,7 +217,7 @@ if initIndex >= #elementsIdList then
                     contentQuantity = contentMassKg / ingredient.mass
                     local contentPercent = 0
                     if (not element.type:lower():find("hub")) --not a hub
-                            and (not ingredient.type:lower():find("error")) --not item not found
+                        and (not ingredient.type:lower():find("error")) --not item not found
                     then
                         contentPercent = math.floor((ingredient.volume * contentQuantity)*100/container_volume)
                     end
@@ -233,14 +236,14 @@ if initIndex >= #elementsIdList then
                            <td>]] .. utils.round(contentQuantity*100)/100 .. [[</td>
                     ]]
                     if not element.type:lower():find("hub") then
-                        local gauge_color_class = "bg-success"
-                        local text_color_class = ""
-                        if contentPercent < container_fill_red_level then
+                         local gauge_color_class = "bg-success"
+                         local text_color_class = ""
+                         if contentPercent < container_fill_red_level then
                             gauge_color_class = "bg-danger"
-                        elseif  contentPercent < container_fill_yellow_level then
+                         elseif  contentPercent < container_fill_yellow_level then
                             gauge_color_class = "bg-warning"
                             text_color_class = "text-orangered"
-                        end
+                         end
                         if ingredient.type:lower():find("error") then
                             hud_machines = hud_machines .. [[
                               <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
@@ -249,7 +252,7 @@ if initIndex >= #elementsIdList then
                             </tr>
                             ]]
                         else
-                            hud_machines = hud_machines .. [[
+                        hud_machines = hud_machines .. [[
                               <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
                                     <div class="]] .. gauge_color_class .. [[" style="width:]] .. contentPercent .. [[%;">&nbsp;</div>
                                     <div class="]] .. text_color_class .. [[" style="position:absolute;width:100%;top:0;padding-top:5px;font-weight:bold;">
@@ -295,7 +298,7 @@ if initIndex >= #elementsIdList then
                     element.maintainProductAmount = statusData.maintainProductAmount
                     element.batchesRequested = statusData.batchesRequested
                     if statusData.maintainProductAmount > 0 then
-                        mode = "Maintain " .. statusData.maintainProductAmount
+                    	mode = "Maintain " .. statusData.maintainProductAmount
                     elseif statusData.batchesRequested > 0 and statusData.batchesRequested <= 99999999 then
                         mode = "Produce " .. statusData.batchesRequested
                     end
@@ -445,9 +448,9 @@ if initIndex >= #elementsIdList then
                         ]]
                         local has_quantity = false
                         for k,v in pairs(craft_quantity_digits) do
-                            if tonumber(v) > 0 then
-                                has_quantity = true
-                            end
+                        	if tonumber(v) > 0 then
+                            	has_quantity = true
+                        	end
                         end
                         if not has_quantity then
                             local value = "0"
