@@ -34,16 +34,4 @@ for i = initIndex, maxForLoop, 1 do
         end
         table.insert(elementsId, id)
     end
-    if elementType:find("core") then
-        --thx to Archaego for the idea of getting the core size by HP
-        --thx to Rutiik for the offset values
-        local hp = core.getElementHitPointsById(id)
-        if hp > 10000 then
-            coreOffset = 128
-        elseif hp > 1000 then
-            coreOffset = 64
-        elseif hp > 150 then
-            coreOffset = 32
-        end
-    end
 end

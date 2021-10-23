@@ -2,7 +2,7 @@
 	receivers channels for each type of machine
 ]]
 
-local version = "RC 2.0.0 - update 5"
+local version = "V 2.1.0"
 
 system.print("==================================================")
 local print_version_str = ""
@@ -102,7 +102,6 @@ elements = {}
 elementsTypes = {}
 machines_count = {}
 machines_count.total = 0
-coreOffset = 16
 initIndex = 1
 listIndex = 1
 elementsIdList = {}

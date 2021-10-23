@@ -269,7 +269,7 @@ if initIndex >= #elementsIdList then
                     <tr>
                        <th>id</th>
                         <th>Machine Name</th>
-                	   <th>Selected Recipe</th>
+                	    <th>Selected Recipe</th>
                         <th>Cycles From Start</th>
                         <th>Status</th>
                         <th>Mode</th>
@@ -279,11 +279,13 @@ if initIndex >= #elementsIdList then
                 for i, element in pairs(elements) do
                     local statusData = json.decode(core.getElementIndustryStatus(element.id))
                     local recipeName = "-"
-                    if loadedRecipes[statusData.schematicId] then
-                        recipeName = loadedRecipes[statusData.schematicId]
-                    else
-                        if has_value(recipeToLoad,statusData.schematicId) == false then
-                            table.insert(recipeToLoad, statusData.schematicId)
+                    if not (element.type:lower() == 'transfer unit') then
+                        if loadedRecipes[statusData.schematicId] then
+                            recipeName = loadedRecipes[statusData.schematicId]
+                        else
+                            if has_value(recipeToLoad,statusData.schematicId) == false then
+                                table.insert(recipeToLoad, statusData.schematicId)
+                            end
                         end
                     end
                     local remainingTime = 0
@@ -298,9 +300,9 @@ if initIndex >= #elementsIdList then
                     element.maintainProductAmount = statusData.maintainProductAmount
                     element.batchesRequested = statusData.batchesRequested
                     if statusData.maintainProductAmount > 0 then
-                    	mode = "Maintain " .. statusData.maintainProductAmount
+                    	mode = "Maintain " .. math.floor(statusData.maintainProductAmount)
                     elseif statusData.batchesRequested > 0 and statusData.batchesRequested <= 99999999 then
-                        mode = "Produce " .. statusData.batchesRequested
+                        mode = "Produce " .. math.floor(statusData.batchesRequested)
                     end
                     local status = "-"
                     if element.status then status = element.status end
@@ -342,11 +344,10 @@ if initIndex >= #elementsIdList then
             </div>]]
             if #elements > 0 then
                 local selected_machine = elements[selected_machine_index]
-                --Special Thx to Rutik for his help on how to get the exact the position of the element
                 local position = vec3(selected_machine.position)
-                local x = position.x - coreOffset
-                local y = position.y - coreOffset
-                local z = position.z - coreOffset
+                local x = position.x
+                local y = position.y
+                local z = position.z
                 local offset1 = 1
                 local offset15 = 1.5
                 local offset2 = 2
@@ -448,6 +449,7 @@ if initIndex >= #elementsIdList then
                         ]]
                         local has_quantity = false
                         for k,v in pairs(craft_quantity_digits) do
+                            if tonumber(v) == nil then v = 0 end
                         	if tonumber(v) > 0 then
                             	has_quantity = true
                         	end
@@ -456,10 +458,10 @@ if initIndex >= #elementsIdList then
                             local value = "0"
                             if selected_machine.maintainProductAmount > 0 then
                                 --mode = "Maintain " .. selected_machine.maintainProductAmount
-                                value = tostring(selected_machine.maintainProductAmount)
+                                value = tostring(math.floor(selected_machine.maintainProductAmount))
                             elseif selected_machine.batchesRequested > 0 and selected_machine.batchesRequested <= 99999999 then
                                 --mode = "Produce " .. selected_machine.batchesRequested
-                                value = tostring(selected_machine.batchesRequested)
+                                value = tostring(math.floor(selected_machine.batchesRequested))
                             end
                             for i = #value, 1, -1 do
                                 local c = value:sub(i,i)
