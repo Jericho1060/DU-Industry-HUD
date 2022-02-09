@@ -119,6 +119,9 @@ if initIndex >= #elementsIdList then
         end
         
         if hud_displayed == true then
+
+            local elementTable = {}
+
             selected_type = elementsTypes[selected_index]
             
             hud_elements_type_list = [[<div class="hud_list_container hud_container">
@@ -277,7 +280,7 @@ if initIndex >= #elementsIdList then
                     </tr>
                 ]]
 
-                local elementTable = {}
+              
 
 
                 for i, element in pairs(elements) do
@@ -327,10 +330,11 @@ if initIndex >= #elementsIdList then
                     elementData.ElementName = element.name
                     elementData.recipeName = recipeName
                     elementData.unitsProduced = unitsProduced
-                    elementData.status_class =status_class
-                    elementData.status=status
-                    elementData.mode=mode
                     elementData.status_class = status_class
+                    elementData.status = status
+                    elementData.mode = mode
+                    elementData.status_class = status_class
+                    elementData.Id = i
                     table.insert(elementTable,1,elementData)
                 end
                 table.sort(elementTable, function(a,b) return a.recipeName:lower() < b.recipeName:lower() end)
@@ -363,7 +367,14 @@ if initIndex >= #elementsIdList then
             <div style="text-align:center;font-weight:bold;border-top:1px solid white;">&#x2193; &nbsp;&nbsp; Arrow Down</div>
             </div>]]
             if #elements > 0 then
-                local selected_machine = elements[selected_machine_index]
+                
+                local elementIndex = 0
+                elementIndex = elementTable[selected_machine_index].Id
+
+
+                local selected_machine = elements[elementIndex]
+
+
                 local position = vec3(selected_machine.position)
                 local x = position.x
                 local y = position.y
