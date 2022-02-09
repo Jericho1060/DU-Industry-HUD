@@ -1,6 +1,11 @@
 if enableRemoteControl == true then
     --Send Command 12
-    local selected_machine = elements[selected_machine_index]
+   
+
+    local idx = elementTable[selected_machine_index].Id
+   
+    local selected_machine = elements[idx]
+
     for _,db in pairs(databanks) do
         if command_2:find("MAINTAIN") or command_2:find("BATCH") then
             craft_quantity = ""

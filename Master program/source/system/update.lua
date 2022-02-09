@@ -120,7 +120,7 @@ if initIndex >= #elementsIdList then
         
         if hud_displayed == true then
 
-            local elementTable = {}
+            elementTable = {}
 
             selected_type = elementsTypes[selected_index]
             
