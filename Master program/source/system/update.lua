@@ -1,5 +1,8 @@
 hud_main_css = [[
     <style>
+	   * {
+		  font-size: ]] .. tostring(contentFontSize) .. [[px;
+	   }
         .hud_container {
             border: 2px solid orange;
             border-radius:10px;
@@ -22,8 +25,8 @@ hud_main_css = [[
         }
         .hud_machine_detail {
             position: absolute;
-            top: ]] .. tostring((125/1080)*100) .. [[vh;
-            right: ]] .. tostring((450/1920)*100) .. [[vw;
+            top: ]] .. tostring((250/1080)*100) .. [[vh;
+            right: ]] .. tostring((50/1920)*100) .. [[vw;
             text-transform: uppercase;
             font-weight: bold;
         }
@@ -88,7 +91,7 @@ if initIndex >= #elementsIdList then
 
         minOnPage = ((page - 1) * elementsByPage) + 1
         maxOnPage = page * elementsByPage
-
+    
         elements = {}
         refresh_id_list = {}
         local temp_elements_for_sorting = {}
@@ -109,15 +112,15 @@ if initIndex >= #elementsIdList then
                 elementData.name = core.getElementNameById(elementData.id)
                 elementData.position = core.getElementPositionById(elementData.id)
                 --elementData.status = core.getElementIndustryStatus(elementData.id)
-
+                
                 table.insert(refresh_id_list, elementData.id)
                 table.insert(elements, elementData)
             end
         end
-
+        
         if hud_displayed == true then
             selected_type = elementsTypes[selected_index]
-
+            
             hud_elements_type_list = [[<div class="hud_list_container hud_container">
                 <div style="text-align:center;font-weight:bold;border-bottom:1px solid white;">&#x2191; &nbsp;&nbsp; Ctrl+Arrow Up</div>
             ]]
@@ -164,12 +167,12 @@ if initIndex >= #elementsIdList then
                       <th>Total Mass</th>
                       <th>Amount of Items</th>
                     ]]
-                if not elementsTypes[selected_index]:lower():find("hub") then
-                    hud_machines = hud_machines .. [[
+                    if not elementsTypes[selected_index]:lower():find("hub") then
+                        hud_machines = hud_machines .. [[
                             <th>Container Fill</th>
                         ]]
-                end
-                hud_machines = hud_machines .. [[</tr>
+                    end
+                    hud_machines = hud_machines .. [[</tr>
                 ]]
                 for i, element in pairs(elements) do
                     local splittedName = strSplit(element.name, "_")
@@ -214,7 +217,7 @@ if initIndex >= #elementsIdList then
                     contentQuantity = contentMassKg / ingredient.mass
                     local contentPercent = 0
                     if (not element.type:lower():find("hub")) --not a hub
-                            and (not ingredient.type:lower():find("error")) --not item not found
+                        and (not ingredient.type:lower():find("error")) --not item not found
                     then
                         contentPercent = math.floor((ingredient.volume * contentQuantity)*100/container_volume)
                     end
@@ -233,14 +236,14 @@ if initIndex >= #elementsIdList then
                            <td>]] .. utils.round(contentQuantity*100)/100 .. [[</td>
                     ]]
                     if not element.type:lower():find("hub") then
-                        local gauge_color_class = "bg-success"
-                        local text_color_class = ""
-                        if contentPercent < container_fill_red_level then
+                         local gauge_color_class = "bg-success"
+                         local text_color_class = ""
+                         if contentPercent < container_fill_red_level then
                             gauge_color_class = "bg-danger"
-                        elseif  contentPercent < container_fill_yellow_level then
+                         elseif  contentPercent < container_fill_yellow_level then
                             gauge_color_class = "bg-warning"
                             text_color_class = "text-orangered"
-                        end
+                         end
                         if ingredient.type:lower():find("error") then
                             hud_machines = hud_machines .. [[
                               <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
@@ -249,7 +252,7 @@ if initIndex >= #elementsIdList then
                             </tr>
                             ]]
                         else
-                            hud_machines = hud_machines .. [[
+                        hud_machines = hud_machines .. [[
                               <th style="position:relative;width: ]] .. tostring((150/1920)*100) .. [[vw;">
                                     <div class="]] .. gauge_color_class .. [[" style="width:]] .. contentPercent .. [[%;">&nbsp;</div>
                                     <div class="]] .. text_color_class .. [[" style="position:absolute;width:100%;top:0;padding-top:5px;font-weight:bold;">
@@ -273,14 +276,21 @@ if initIndex >= #elementsIdList then
                         <th>Time Remaining</th>
                     </tr>
                 ]]
+
+                local elementTable = {}
+
+
                 for i, element in pairs(elements) do
+                    local elementData = {}
                     local statusData = json.decode(core.getElementIndustryStatus(element.id))
                     local recipeName = "-"
-                    if loadedRecipes[statusData.schematicId] then
-                        recipeName = loadedRecipes[statusData.schematicId]
-                    else
-                        if has_value(recipeToLoad,statusData.schematicId) == false then
-                            table.insert(recipeToLoad, statusData.schematicId)
+                    if not (element.type:lower() == 'transfer unit') then
+                        if loadedRecipes[statusData.schematicId] then
+                            recipeName = loadedRecipes[statusData.schematicId]
+                        else
+                            if has_value(recipeToLoad,statusData.schematicId) == false then
+                                table.insert(recipeToLoad, statusData.schematicId)
+                            end
                         end
                     end
                     local remainingTime = 0
@@ -295,9 +305,9 @@ if initIndex >= #elementsIdList then
                     element.maintainProductAmount = statusData.maintainProductAmount
                     element.batchesRequested = statusData.batchesRequested
                     if statusData.maintainProductAmount > 0 then
-                        mode = "Maintain " .. statusData.maintainProductAmount
+                        mode = "Maintain " .. math.floor(statusData.maintainProductAmount)
                     elseif statusData.batchesRequested > 0 and statusData.batchesRequested <= 99999999 then
-                        mode = "Produce " .. statusData.batchesRequested
+                        mode = "Produce " .. math.floor(statusData.batchesRequested)
                     end
                     local status = "-"
                     if element.status then status = element.status end
@@ -307,24 +317,39 @@ if initIndex >= #elementsIdList then
                     if status:lower():find("jammed") then status_class = "text-danger" end
                     if status:lower():find("pending") then status_class = "text-primary" end
                     status = status:gsub("JAMMED_", ""):gsub("_", " ")
-                    hud_machines = hud_machines .. [[<tr]]
-                    if selected_machine_index == i then
-                        hud_machines = hud_machines .. [[ class="selected"]]
-                    end
                     local machine_id = "-"
                     if element.id then machine_id = element.id end
                     local unitsProduced = 0
                     if element.unitsProduced then unitsProduced = element.unitsProduced end
-                    hud_machines = hud_machines .. [[>
-                            <th>]] .. machine_id .. [[</th>
-                            <th class="]] .. status_class .. [[">]] .. element.name .. [[</th>
-                            <th>]] .. recipeName .. [[</th>
-                            <td>]] .. unitsProduced .. [[</td>
-                            <th class="]] .. status_class .. [[">]] .. status .. [[</th>
-                		  <th>]] .. mode .. [[</th>
-                            <td class="]] .. status_class .. [[">]] .. SecondsToClockString(element.remainingTime) .. [[</td>
-                        </tr>
-                    ]]
+                    elementData.time =  SecondsToClockString(remainingTime)
+                    elementData.Machine_id = machine_id
+                    elementData.Status_Class = status_class
+                    elementData.ElementName = element.name
+                    elementData.recipeName = recipeName
+                    elementData.unitsProduced = unitsProduced
+                    elementData.status_class =status_class
+                    elementData.status=status
+                    elementData.mode=mode
+                    elementData.status_class = status_class
+                    table.insert(elementTable,1,elementData)
+                end
+                table.sort(elementTable, function(a,b) return a.recipeName:lower() < b.recipeName:lower() end)
+
+                for i, element in pairs(elementTable) do
+                    hud_machines = hud_machines .. [[<tr]]
+                    if (selected_machine_index == i) then
+                        hud_machines = hud_machines .. [[ class="selected"]]
+                    end
+                   hud_machines = hud_machines .. [[>
+                             <th>]] .. element.Machine_id .. [[</th>
+                             <th class="]] .. element.Status_Class .. [[">]] .. element.ElementName .. [[</th>
+                             <th>]] ..  element.recipeName  .. [[</th>
+                             <td>]] ..  element.unitsProduced .. [[</td>
+                             <th class="]] .. element.status_class .. [[">]] .. element.status .. [[</th>
+                           <th>]] .. element.mode .. [[</th>
+                             <td class="]] .. element.status_class .. [[">]] .. element.time .. [[</td>
+                         </tr>
+                     ]]
                 end
             end
             hud_machines = hud_machines .. [[</table>
@@ -339,11 +364,10 @@ if initIndex >= #elementsIdList then
             </div>]]
             if #elements > 0 then
                 local selected_machine = elements[selected_machine_index]
-                --Special Thx to Rutik for his help on how to get the exact the position of the element
                 local position = vec3(selected_machine.position)
-                local x = position.x - coreOffset
-                local y = position.y - coreOffset
-                local z = position.z - coreOffset
+                local x = position.x
+                local y = position.y
+                local z = position.z
                 local offset1 = 1
                 local offset15 = 1.5
                 local offset2 = 2
@@ -445,18 +469,19 @@ if initIndex >= #elementsIdList then
                         ]]
                         local has_quantity = false
                         for k,v in pairs(craft_quantity_digits) do
-                            if tonumber(v) > 0 then
-                                has_quantity = true
-                            end
+                             if tonumber(v) == nil then v = 0 end
+                        	if tonumber(v) > 0 then
+                            	has_quantity = true
+                        	end
                         end
                         if not has_quantity then
                             local value = "0"
                             if selected_machine.maintainProductAmount > 0 then
                                 --mode = "Maintain " .. selected_machine.maintainProductAmount
-                                value = tostring(selected_machine.maintainProductAmount)
+                                value = tostring(math.floor(selected_machine.maintainProductAmount))
                             elseif selected_machine.batchesRequested > 0 and selected_machine.batchesRequested <= 99999999 then
                                 --mode = "Produce " .. selected_machine.batchesRequested
-                                value = tostring(selected_machine.batchesRequested)
+                                value = tostring(math.floor(selected_machine.batchesRequested))
                             end
                             for i = #value, 1, -1 do
                                 local c = value:sub(i,i)
@@ -492,7 +517,7 @@ if initIndex >= #elementsIdList then
                                 <th>ALT+2</th>
                             </tr>
                         ]]
-
+    
                     end
                     hud_machine_detail = hud_machine_detail .. [[</table></div>]]
                 end
@@ -500,7 +525,7 @@ if initIndex >= #elementsIdList then
         end
         system.setScreen(hud_main_css .. hud_help_command .. hud_elements_type_list .. hud_machines .. hud_machine_detail)
     end
-
+    
 else
     system.setScreen(hud_main_css .. hud_help_command .. [[
         <div class="hud_list_container hud_container">
