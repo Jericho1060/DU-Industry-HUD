@@ -4,91 +4,60 @@
     https://github.com/Jericho1060/DualUniverse/edit/master/TimeScript/TimeScript.lua
 ]]--
 
-summer_time = false --export
-
-function DUCurrentDateTime()
-    local time = system.getTime()
-    local additionnal_hour = 0
-    local seconds_to_2018 = 7948800 --from 01-10-2017 (arkship time)
-    local secondsInMinute = 60
-    local secondsInHour = secondsInMinute * 60
-    local secondsInDay = secondsInHour * 24
-    local secondsInYear = secondsInDay * 365
+function DUCurrentDateTime(utc)
+    local t = system.getUtcTime()
+    if not utc then t = t + system.getUtcOffset() end
+    local DSEC=24*60*60
+    local YSEC=365*DSEC
+    local LSEC=YSEC+DSEC
+    local FSEC=4*YSEC+DSEC
+    local BASE_DOW=4
+    local BASE_YEAR=1970
+    local _days={-1, 30, 58, 89, 119, 150, 180, 211, 242, 272, 303, 333, 364}
+    local _lpdays={}
+    for i=1,2  do _lpdays[i]=_days[i]   end
+    for i=3,13 do _lpdays[i]=_days[i]+1 end
+    local y,j,m,d,w,h,n,s
+    local mdays=_days
+    s=t
+    y=math.floor(s/FSEC)
+    s=s-y*FSEC
+    y=y*4+BASE_YEAR
+    if s>=YSEC then
+        y=y+1
+        s=s-YSEC
+        if s>=YSEC then
+            y=y+1
+            s=s-YSEC
+            if s>=LSEC then
+                y=y+1
+                s=s-LSEC
+            else
+                mdays=_lpdays
+            end
+        end
+    end
+    j=math.floor(s/DSEC)
+    s=s-j*DSEC
+    local m=1
+    while mdays[m]<j do m=m+1 end
+    m=m-1
+    local d=j-mdays[m]
+    w=(math.floor(t/DSEC)+BASE_DOW)%7
+    if w == 0 then w = 7 end
+    h=math.floor(s/3600)
+    s=s-h*3600
+    n=math.floor(s/60)
+    function round(a,b)if b then return utils.round(a/b)*b end;return a>=0 and math.floor(a+0.5)or math.ceil(a-0.5)end
+    s=round(s-n*60)
     local weekDaysNames = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
     local weekDaysShortNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
     local monthNames = {"January", "Febuary", "March", "April", "May", "June", "July", "August", "Septrember", "October", "Novermber", "December"}
     local monthShortNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
-    if summer_time then time = time + secondsInHour end
-    time = time - seconds_to_2018
-    local weekDayIndex = math.floor(time/secondsInDay)%7
-    if weekDayIndex == 0 then weekDayIndex = 7 end
-    local year = 2018
-    local month = 1
-    local day = 1
-    local daysInFebuary = 28
-    while time >= secondsInYear do
-        if (year % 4) == 0 then --leap year
-            if time >= (secondsInYear - secondsInDay) then
-                year = year + 1
-                time = time - secondsInYear - secondsInDay
-            else
-                local daysInFebuary = 29
-                break
-            end
-        else
-            year = year + 1
-            time = time - secondsInYear
-        end
-    end
-    local daysFromYearStart = math.floor(time/secondsInDay)
-    if daysFromYearStart >= 31 then
-        month = 2
-        daysFromYearStart = daysFromYearStart - 31
-    end
-    if daysFromYearStart >= daysInFebuary then
-        month = 3
-        daysFromYearStart = daysFromYearStart - daysInFebuary
-    end
-    if daysFromYearStart >= 31 then
-        month = 4
-        daysFromYearStart = daysFromYearStart - 31
-    end
-    if daysFromYearStart >= 30 then
-        month = 5
-        daysFromYearStart = daysFromYearStart - 30
-    end
-    if daysFromYearStart >= 31 then
-        month = 6
-        daysFromYearStart = daysFromYearStart - 31
-    end
-    if daysFromYearStart >= 30 then
-        month = 7
-        daysFromYearStart = daysFromYearStart - 30
-    end
-    if daysFromYearStart >= 31 then
-        month = 8
-        daysFromYearStart = daysFromYearStart - 31
-    end
-    if daysFromYearStart >= 31 then
-        month = 9
-        daysFromYearStart = daysFromYearStart - 31
-    end
-    if daysFromYearStart >= 30 then
-        month = 10
-        daysFromYearStart = daysFromYearStart - 30
-    end
-    if daysFromYearStart >= 31 then
-        month = 11
-        daysFromYearStart = daysFromYearStart - 31
-    end
-    if daysFromYearStart >= 30 then
-        month = 12
-        daysFromYearStart = daysFromYearStart - 30
-    end
-    day = daysFromYearStart
-    time = time % secondsInDay
-    local h = math.floor(time/secondsInHour)%24
-    local m = math.floor(time%secondsInHour/60)
-    local s = math.floor(time%60)
-    return year, month, day, h, m, s, weekDayIndex, weekDaysNames[weekDayIndex], weekDaysShortNames[weekDayIndex], monthNames[month], monthShortNames[month]
+    return y,m,d,h,n,s,w,weekDaysNames[w],weekDaysShortNames[w],monthNames[m],monthShortNames[m],j+1
 end
+
+--[[
+    local year, month, day, hour, minute, second, weekDayIndex, weekDayName, weekDayShortName, monthName, monthShortName, daysFromYearStart = DUCurrentDateTime()
+    system.print(string.format("%02d/%02d/%04d %02d:%02d:%02d",day,month,year,hour,minute,second))
+]]
