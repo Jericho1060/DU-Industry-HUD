@@ -52,7 +52,7 @@ function DUCurrentDateTime(utc)
     s=round(s-n*60)
     local weekDaysNames = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
     local weekDaysShortNames = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
-    local monthNames = {"January", "Febuary", "March", "April", "May", "June", "July", "August", "Septrember", "October", "Novermber", "December"}
+    local monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}
     local monthShortNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
     return y,m,d,h,n,s,w,weekDaysNames[w],weekDaysShortNames[w],monthNames[m],monthShortNames[m],j+1
 end
