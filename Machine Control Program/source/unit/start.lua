@@ -12,6 +12,26 @@ function strSplit(s, delimiter)
     return result;
 end
 
+--[[
+	check if a table contains an element
+	By Jericho
+]]
+function hasValue(tab, val)
+    for _,v in ipairs(tab) do
+        if v == val then
+            return true
+        end
+    end
+    return false
+end
+
+
+
+function removeQualityInName(name)
+    if not name then return '' end
+    return name:lower():gsub('basic ', ''):gsub('uncommon ', ''):gsub('advanced ', ''):gsub('rare ', ''):gsub('exotic ', '')
+end
+
 databank = nil
 industries = {}
 for slot_name, slot in pairs(unit) do
