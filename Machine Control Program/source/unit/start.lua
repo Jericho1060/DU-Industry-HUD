@@ -1,4 +1,4 @@
-unit.hide()
+unit.hideWidget()
 
 --[[
 	split a string on a delimiter
@@ -18,9 +18,9 @@ for slot_name, slot in pairs(unit) do
     if
         type(slot) == "table"
         and type(slot.export) == "table"
-        and slot.getElementClass
+        and slot.getClass
     then
-        slot_type = slot.getElementClass():lower()
+        slot_type = slot.getClass():lower()
         if slot_type == 'databankunit' then
             databank = slot
         end
@@ -31,7 +31,7 @@ for slot_name, slot in pairs(unit) do
 end
 if databank ~= nil then
     for _,slot in pairs(industries) do
-        local slot_id = slot.getId()
+        local slot_id = slot.getLocalId()
         if databank.hasKey(tostring(slot_id)) == 1 then
             local command = databank.getStringValue(slot_id)
             if command ~= nil and command ~= "" then
