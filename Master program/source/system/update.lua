@@ -104,14 +104,10 @@ if initIndex >= #elementsIdList then
         table.sort(temp_elements_for_sorting, function(a,b) return a.name:lower() < b.name:lower() end)
         for i,elementData in pairs(temp_elements_for_sorting) do
             if i >= minOnPage and i <= maxOnPage then
-                elementType = core.getElementTypeById(elementData.id)
-                --if Storage.hasKey(elementData.id) == 1 then
-                --    elementData = MyJson.parse(Storage.getStringValue(elementData.id))
-                --end
+                elementType = core.getElementDisplayNameById(elementData.id)
                 elementData.type = elementType
                 elementData.name = core.getElementNameById(elementData.id)
                 elementData.position = core.getElementPositionById(elementData.id)
-                --elementData.status = core.getElementIndustryStatus(elementData.id)
 
                 table.insert(refresh_id_list, elementData.id)
                 table.insert(elements, elementData)
@@ -269,7 +265,7 @@ if initIndex >= #elementsIdList then
                     <tr>
                        <th>id</th>
                         <th>Machine Name</th>
-                	    <th>Selected Recipe</th>
+                	   <th>Selected Recipe</th>
                         <th>Cycles From Start</th>
                         <th>Status</th>
                         <th>Mode</th>
@@ -277,7 +273,7 @@ if initIndex >= #elementsIdList then
                     </tr>
                 ]]
                 for i, element in pairs(elements) do
-                    local statusData = json.decode(core.getElementIndustryStatus(element.id))
+                    local statusData = core.getElementIndustryInfoById(element.id)
                     local recipeName = "-"
                     if not (element.type:lower() == 'transfer unit') then
                         if loadedRecipes[statusData.schematicId] then
@@ -305,13 +301,26 @@ if initIndex >= #elementsIdList then
                         mode = "Produce " .. math.floor(statusData.batchesRequested)
                     end
                     local status = "-"
-                    if element.status then status = element.status end
                     local status_class = ""
-                    if status:lower():find("running") then status_class = "text-success" end
-                    if status:lower():find("stopped") then status_class = "text-info" end
-                    if status:lower():find("jammed") then status_class = "text-danger" end
-                    if status:lower():find("pending") then status_class = "text-primary" end
-                    status = status:gsub("JAMMED_", ""):gsub("_", " ")
+                    if element.status == 2 then
+                        status_class = "text-success"
+                        status = "RUNNING"
+                    end
+                    if element.status == 1 then
+                        status_class = "text-info"
+                        status = "STOPPED"
+                    end
+                    if (element.status == 3) or (element.status == 4) or (element.status == 5) then
+                        status_class = "text-danger"
+                        if element.status == 3 then status = "MISSING INGREDIENT"
+                        elseif element.status == 4 then status = "OUTPUT FULL"
+                        elseif element.status == 5 then status = "NO OUTPUT CONTAINER"
+                        end
+                    end
+                    if element.status == 6 then
+                        status_class = "text-primary"
+                        status = "PENDING"
+                    end
                     hud_machines = hud_machines .. [[<tr]]
                     if selected_machine_index == i then
                         hud_machines = hud_machines .. [[ class="selected"]]
@@ -449,7 +458,7 @@ if initIndex >= #elementsIdList then
                         ]]
                         local has_quantity = false
                         for k,v in pairs(craft_quantity_digits) do
-                            if tonumber(v) == nil then v = 0 end
+                             if tonumber(v) == nil then v = 0 end
                         	if tonumber(v) > 0 then
                             	has_quantity = true
                         	end

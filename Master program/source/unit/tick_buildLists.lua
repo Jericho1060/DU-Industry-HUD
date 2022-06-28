@@ -4,21 +4,21 @@ if maxForLoop > #elementsId then maxForLoop = #elementsId end
 for i = listIndex, maxForLoop, 1 do
     listIndex = i
     local id = elementsId[i]
-    elementType = core.getElementTypeById(id)
+    elementType = core.getElementDisplayNameById(id)
     local elementName = core.getElementNameById(id):lower()
     if
-    (elementType:lower():find("container")
+        (elementType:lower():find("container")
             and elementName:find(containerMonitoringPrefix:lower()))
             or (not elementType:lower():find("container"))
-    then
+        then
         local formatedName = removeQualityInName(elementType)
         table.insert(elementsTypes, formatedName)
     end
     if selected_type == removeQualityInName(elementType) then
         if
-        (elementType:lower():find("container") and elementName:find(containerMonitoringPrefix:lower()))
-                or (not elementType:lower():find("container"))
-        then
+            (elementType:lower():find("container") and elementName:find(containerMonitoringPrefix:lower()))
+            or (not elementType:lower():find("container"))
+            then
             table.insert(selectedElementsId, id)
         end
     end

@@ -2,7 +2,7 @@
 	receivers channels for each type of machine
 ]]
 
-local version = "V 2.1.0"
+local version = "V 2.2.0"
 
 system.print("==================================================")
 local print_version_str = ""
@@ -25,9 +25,9 @@ channel_for_metalwork = "receiver_metalworks" --export: receiver channel to send
 channel_for_3d_printer = "receiver_3dprinters" --export: receiver channel to send orders to 3d printers
 channel_for_transfer = "receiver_transfert" --export: receiver channel to send orders to tranfer units
 
-container_proficiency_lvl = 0 ---export: Talent level for Container Proficiency
-container_fill_red_level = 10 ---export: The percent fill below gauge will be red
-container_fill_yellow_level = 50 ---export: The percent fill below gauge will be yellow
+container_proficiency_lvl = 0 --: Talent level for Container Proficiency
+container_fill_red_level = 10 --: The percent fill below gauge will be red
+container_fill_yellow_level = 50 --t: The percent fill below gauge will be yellow
 
 enableRefinerMonitoring = true --export: enable or disable the Refiners monitoring
 enableAssemblyMonitoring = true --export: enable or disable the Assembly lines monitoring
@@ -40,9 +40,9 @@ enableRecyclerMonitoring = true --export: enable or disable the Recyclers monito
 enableMetalworkMonitoring = true --export: enable or disable the Metalworks monitoring
 enable3DPrinterMonitoring = true --export: enable or disable the 3D Printers monitoring
 enableTransferMonitoring = true --export: enable or disable the transfer units monitoring
-enableContainerMonitoring = false ---export: enable or disable the containers and hubs monitoring
+enableContainerMonitoring = false --: enable or disable the containers and hubs monitoring
 enableRemoteControl = true --export: enable the HUD to control machines (start/stop/batch/maintain)
-containerMonitoringPrefix = "MONIT_" ---export: the prefix used to enable container monitoring
+containerMonitoringPrefix = "MONIT_" --: the prefix used to enable container monitoring
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
 maxAmountOfElementsLoadedBySecond = 2000 --export: if cpu load errors at start, lower that value
@@ -73,15 +73,15 @@ for slot_name, slot in pairs(unit) do
     if
         type(slot) == "table"
         and type(slot.export) == "table"
-        and slot.getElementClass
+        and slot.getClass
     then
-        if slot.getElementClass():lower() == 'databankunit' then
+        if slot.getClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
         end
-        if slot.getElementClass():lower():find("coreunit") then
+        if slot.getClass():lower():find("coreunit") then
             core = slot
         end
-        if slot.getElementClass():lower() == 'emitterunit' then
+        if slot.getClass():lower() == 'emitterunit' then
             emitter = slot
         end
     end
