@@ -160,8 +160,8 @@ if initIndex >= #elementsIdList then
                        <th>Container Size</th>
                        <th>Item Type</th>
                        <th>Unit Mass</th>
-                      <th>Total Mass</th>
-                      <th>Amount of Items</th>
+                       <th>Total Mass</th>
+                       <th>Amount of Items</th>
                     ]]
                     if not elementsTypes[selected_index]:lower():find("hub") then
                         hud_machines = hud_machines .. [[
@@ -275,15 +275,13 @@ if initIndex >= #elementsIdList then
                 for i, element in pairs(elements) do
                     local statusData = core.getElementIndustryInfoById(element.id)
                     local recipeName = "-"
-                    if not (element.type:lower() == 'transfer unit') then
-                        if loadedRecipes[statusData.schematicId] then
-                            recipeName = loadedRecipes[statusData.schematicId]
-                        else
-                            if has_value(recipeToLoad,statusData.schematicId) == false then
-                                table.insert(recipeToLoad, statusData.schematicId)
-                            end
+                    if #statusData.currentProducts > 0 then
+                        local item = system.getItem(statusData.currentProducts[1].id)
+                        if item.locDisplayNameWithSize then
+                            recipeName = item.locDisplayNameWithSize
                         end
                     end
+
                     local remainingTime = 0
                     if (statusData) and (statusData.remainingTime) and (statusData.remainingTime <= (3600*24*365)) then
                         remainingTime = statusData.remainingTime

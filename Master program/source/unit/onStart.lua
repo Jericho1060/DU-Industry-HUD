@@ -2,7 +2,7 @@
 	receivers channels for each type of machine
 ]]
 
-local version = "V 2.3.1"
+local version = "V 2.3.2"
 
 system.print("==================================================")
 local print_version_str = ""
@@ -134,7 +134,3 @@ hud_help_command = ""
 unit.setTimer("helperRefresh",1)
 minOnPage = 0
 maxOnPage = 0
-recipeToLoad = {}
-loadedRecipes = {}
-
-unit.setTimer("recipeUpdate", 1)
