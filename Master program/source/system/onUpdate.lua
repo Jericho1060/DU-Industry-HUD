@@ -310,11 +310,12 @@ if initIndex >= #elementsIdList then
                         status_class = "text-info"
                         status = "STOPPED"
                     end
-                    if (element.status == 3) or (element.status == 4) or (element.status == 5) then
+                    if (element.status == 3) or (element.status == 4) or (element.status == 5) or (element.status == 7) then
                         status_class = "text-danger"
                         if element.status == 3 then status = "MISSING INGREDIENT"
                         elseif element.status == 4 then status = "OUTPUT FULL"
                         elseif element.status == 5 then status = "NO OUTPUT CONTAINER"
+                        elseif element.status == 5 then status = "MISSING SCHEMATIC"
                         end
                     end
                     if element.status == 6 then
@@ -409,15 +410,30 @@ if initIndex >= #elementsIdList then
                     core.moveSticker(markers[10], x, y + offset2 + offsetFromCenter, z + offset15)
                 end
                 if (not selected_machine.type:lower():find("container")) and (enableRemoteControl == true) then
-                    local status = "-"
-                    if selected_machine.status then status = selected_machine.status end
                     local status_class = ""
                     local machines_actions = {}
-                    if status:lower():find("running") then status_class = "text-success" end
-                    if status:lower():find("stopped") then status_class = "text-info" end
-                    if status:lower():find("jammed") then status_class = "text-danger" end
-                    if status:lower():find("pending") then status_class = "text-primary" end
-                    status = status:gsub("JAMMED_", ""):gsub("_", " ")
+                    local status = "-"
+                    local status_class = ""
+                    if selected_machine.status == 2 then
+                        status_class = "text-success"
+                        status = "RUNNING"
+                    end
+                    if selected_machine.status == 1 then
+                        status_class = "text-info"
+                        status = "STOPPED"
+                    end
+                    if (selected_machine.status == 3) or (selected_machine.status == 4) or (selected_machine.status == 5) or (selected_machine.status == 7) then
+                        status_class = "text-danger"
+                        if selected_machine.status == 3 then status = "MISSING INGREDIENT"
+                        elseif selected_machine.status == 4 then status = "OUTPUT FULL"
+                        elseif selected_machine.status == 5 then status = "NO OUTPUT CONTAINER"
+                        elseif selected_machine.status == 5 then status = "MISSING SCHEMATIC"
+                        end
+                    end
+                    if selected_machine.status == 6 then
+                        status_class = "text-primary"
+                        status = "PENDING"
+                    end
                     hud_machine_detail = [[<div class="hud_machine_detail hud_container">
                             <table>
                                 <tr>

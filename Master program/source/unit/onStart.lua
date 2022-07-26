@@ -2,7 +2,7 @@
 	receivers channels for each type of machine
 ]]
 
-local version = "V 2.2.0"
+local version = "V 2.3.1"
 
 system.print("==================================================")
 local print_version_str = ""
