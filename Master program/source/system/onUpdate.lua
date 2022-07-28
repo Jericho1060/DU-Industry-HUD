@@ -1,3 +1,17 @@
+local statusList = {"STOPPED","RUNNING","MISSING INGREDIENT","OUTPUT FULL","NO OUTPUT CONTAINER","PENDING","MISSING SCHEMATIC"}
+function getIndustryStatusClass(status)
+    if status == 1 then
+        return "text-info"
+    elseif status == 2 then
+        return "text-success"
+    elseif ((status >= 3) and (status <= 5)) or (status == 7) then
+        return "text-danger"
+    elseif status == 6 then
+        return "text-primary"
+    end
+    return "" --default value for other status that can be added
+end
+
 hud_main_css = [[
     <style>
 	   * {
@@ -91,7 +105,7 @@ if initIndex >= #elementsIdList then
 
         minOnPage = ((page - 1) * elementsByPage) + 1
         maxOnPage = page * elementsByPage
-
+    
         elements = {}
         refresh_id_list = {}
         local temp_elements_for_sorting = {}
@@ -108,15 +122,15 @@ if initIndex >= #elementsIdList then
                 elementData.type = elementType
                 elementData.name = core.getElementNameById(elementData.id)
                 elementData.position = core.getElementPositionById(elementData.id)
-
+                
                 table.insert(refresh_id_list, elementData.id)
                 table.insert(elements, elementData)
             end
         end
-
+        
         if hud_displayed == true then
             selected_type = elementsTypes[selected_index]
-
+            
             hud_elements_type_list = [[<div class="hud_list_container hud_container">
                 <div style="text-align:center;font-weight:bold;border-bottom:1px solid white;">&#x2191; &nbsp;&nbsp; Ctrl+Arrow Up</div>
             ]]
@@ -281,7 +295,7 @@ if initIndex >= #elementsIdList then
                             recipeName = item.locDisplayNameWithSize
                         end
                     end
-
+                    
                     local remainingTime = 0
                     if (statusData) and (statusData.remainingTime) and (statusData.remainingTime <= (3600*24*365)) then
                         remainingTime = statusData.remainingTime
@@ -298,28 +312,8 @@ if initIndex >= #elementsIdList then
                     elseif statusData.batchesRequested > 0 and statusData.batchesRequested <= 99999999 then
                         mode = "Produce " .. math.floor(statusData.batchesRequested)
                     end
-                    local status = "-"
-                    local status_class = ""
-                    if element.status == 2 then
-                        status_class = "text-success"
-                        status = "RUNNING"
-                    end
-                    if element.status == 1 then
-                        status_class = "text-info"
-                        status = "STOPPED"
-                    end
-                    if (element.status == 3) or (element.status == 4) or (element.status == 5) or (element.status == 7) then
-                        status_class = "text-danger"
-                        if element.status == 3 then status = "MISSING INGREDIENT"
-                        elseif element.status == 4 then status = "OUTPUT FULL"
-                        elseif element.status == 5 then status = "NO OUTPUT CONTAINER"
-                        elseif element.status == 5 then status = "MISSING SCHEMATIC"
-                        end
-                    end
-                    if element.status == 6 then
-                        status_class = "text-primary"
-                        status = "PENDING"
-                    end
+                    local status = statusList[element.status] or '-'
+                    local status_class = getIndustryStatusClass(element.status)
                     hud_machines = hud_machines .. [[<tr]]
                     if selected_machine_index == i then
                         hud_machines = hud_machines .. [[ class="selected"]]
@@ -408,30 +402,9 @@ if initIndex >= #elementsIdList then
                     core.moveSticker(markers[10], x, y + offset2 + offsetFromCenter, z + offset15)
                 end
                 if (not selected_machine.type:lower():find("container")) and (enableRemoteControl == true) then
-                    local status_class = ""
                     local machines_actions = {}
-                    local status = "-"
-                    local status_class = ""
-                    if selected_machine.status == 2 then
-                        status_class = "text-success"
-                        status = "RUNNING"
-                    end
-                    if selected_machine.status == 1 then
-                        status_class = "text-info"
-                        status = "STOPPED"
-                    end
-                    if (selected_machine.status == 3) or (selected_machine.status == 4) or (selected_machine.status == 5) or (selected_machine.status == 7) then
-                        status_class = "text-danger"
-                        if selected_machine.status == 3 then status = "MISSING INGREDIENT"
-                        elseif selected_machine.status == 4 then status = "OUTPUT FULL"
-                        elseif selected_machine.status == 5 then status = "NO OUTPUT CONTAINER"
-                        elseif selected_machine.status == 5 then status = "MISSING SCHEMATIC"
-                        end
-                    end
-                    if selected_machine.status == 6 then
-                        status_class = "text-primary"
-                        status = "PENDING"
-                    end
+                    local status = statusList[selected_machine.status] or '-'
+                    local status_class = getIndustryStatusClass(selected_machine.status)
                     hud_machine_detail = [[<div class="hud_machine_detail hud_container">
                             <table>
                                 <tr>
@@ -520,7 +493,7 @@ if initIndex >= #elementsIdList then
                                 <th>ALT+2</th>
                             </tr>
                         ]]
-
+    
                     end
                     hud_machine_detail = hud_machine_detail .. [[</table></div>]]
                 end
@@ -528,7 +501,7 @@ if initIndex >= #elementsIdList then
         end
         system.setScreen(hud_main_css .. hud_help_command .. hud_elements_type_list .. hud_machines .. hud_machine_detail)
     end
-
+    
 else
     system.setScreen(hud_main_css .. hud_help_command .. [[
         <div class="hud_list_container hud_container">
