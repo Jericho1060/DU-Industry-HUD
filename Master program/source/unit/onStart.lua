@@ -2,7 +2,7 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 3.0.5 - alpha"
+local version = "V 3.0.6 - alpha"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
@@ -544,13 +544,15 @@ MyCoroutines = {
     function()
         if selected_machine then
             if prevRecipe == nil then prevRecipe=''end
-            if prevStatus == nil then prevStatus=99 end
+            if prevStatus == nil then prevStatus=1 end
+            if prevName == nil then prevName='' end
             if selected_machine.status then prevStatus = selected_machine.status end
             if selected_machine.recipeName then prevRecipe = selected_machine.recipeName end
+            if selected_machine.name then prevName = selected_machine.name end
             local screenpos = library.getPointOnScreen(ConvertLocalToWorld(selected_machine.position, constructPos, constructRight, constructForward, constructUp))
             if screenpos[1] > 1 then screenpos[1] = 1 elseif screenpos[1] < 0 then screenpos[1] = 0 end
             if screenpos[2] > .95 then screenpos[2] = .95 elseif screenpos[2] < 0 then screenpos[2] = 0 end
-            arhtml = [[<div style="text-align:center;position:absolute;left:]] .. utils.round(screenpos[1]*100) .. [[%;top:]] .. utils.round(screenpos[2]*100) .. [[%;;margin-left:-500px;width:1000px;"><div style="width:fit-content;padding:5px;margin:auto;border:2px solid black;border-radius:10px;background-color:rgba(15,24,29,.75);text-align:center;" class="]] .. getIndustryStatusBgClass(prevStatus) .. [[">]] .. selected_machine.name .. [[<br>]] .. (selected_machine.recipeName or prevRecipe) .. [[<br><br><span style="font-weight:bold;">]] .. statusList[prevStatus] .. [[</span></div></div>]]
+            arhtml = [[<div style="text-align:center;position:absolute;left:]] .. utils.round(screenpos[1]*100) .. [[%;top:]] .. utils.round(screenpos[2]*100) .. [[%;;margin-left:-500px;width:1000px;"><div style="width:fit-content;padding:5px;margin:auto;border:2px solid black;border-radius:10px;background-color:rgba(15,24,29,.75);text-align:center;" class="]] .. getIndustryStatusBgClass(prevStatus) .. [[">]] .. prevName .. [[<br>]] .. prevRecipe .. [[<br><br><span style="font-weight:bold;">]] .. statusList[prevStatus] .. [[</span></div></div>]]
         end
     end,
     function()
