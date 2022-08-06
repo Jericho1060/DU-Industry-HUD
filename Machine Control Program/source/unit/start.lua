@@ -1,3 +1,12 @@
+--[[
+    DU Industry HUD By Jericho
+]]
+
+local version = "V 3.0.5 - alpha"
+local log_split = "================================================="
+--printing version in lua chat
+system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
+
 unit.hideWidget()
 
 --[[
@@ -56,19 +65,19 @@ if databank ~= nil then
             local command = databank.getStringValue(slot_id)
             if command ~= nil and command ~= "" then
                 if command:lower() == "start" then
-                    slot.start()
+                    slot.startRun()
                 elseif command:lower():find("maintain") then
                     local splitted = strSplit(command, "_")
                     local quantity = tonumber(splitted[2])
-                    slot.startAndMaintain(quantity)
+                    slot.startMaintain(quantity)
                 elseif command:lower():find("batch") then
                     local splitted = strSplit(command, "_")
                     local quantity = tonumber(splitted[2])
-                    slot.batchStart(quantity)
+                    slot.startFor(quantity)
                 elseif command:lower() == "stop" then
-                    slot.hardStop(0)
+                    slot.stop(true, false)
                 elseif command:lower() == "soft_stop" then
-                    slot.softStop()
+                    slot.stop(false, false)
                 end
                 databank.setStringValue(id, "")
             end
