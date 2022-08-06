@@ -165,7 +165,7 @@ bootstrap_css_colors = [[<style>.text-white {color: #fff !important;}.text-prima
 bootstrap_text_utils = [[<style>.text-left {text-align: left;}.text-right {text-align: right;}.text-center {text-align: center;}.text-justify {text-align: justify;}.text-nowrap {white-space: nowrap;}.text-lowercase {text-transform: lowercase;}.text-uppercase {text-transform: uppercase;}.text-capitalize {text-transform: capitalize;}</style>]]
 bootstrap_css = bootstrap_css_grid .. bootstrap_css_colors .. bootstrap_text_utils
 
-local statusList = {"STOPPED","RUNNING","MISSING INGREDIENT","OUTPUT FULL","NO OUTPUT CONTAINER","PENDING","MISSING SCHEMATIC"}
+local statusList = {"STOPPED","RUNNING","MISSING INGREDIENT","OUTPUT FULL","NO OUTPUT CONTAINER","PENDING","MISSING SCHEMATIC","SERVER ERROR"}
 function getIndustryStatusClass(status)
     if status == 1 then
         return "text-info"
@@ -175,6 +175,8 @@ function getIndustryStatusClass(status)
         return "text-danger"
     elseif status == 6 then
         return "text-primary"
+    elseif status == 8 then
+        return "text-warning"
     end
     return "" --default value for other status that can be added
 end
@@ -351,6 +353,9 @@ MyCoroutines = {
                 element.recipeName = recipeName
                 element.remainingTime = remainingTime
                 element.status = statusData.state
+                if remainingTime == 0 and statusData.state == 2 then
+                    element.status = 8
+                end
                 element.unitsProduced = statusData.unitsProduced
                 local mode = ""
                 element.maintainProductAmount = statusData.maintainProductAmount
@@ -495,7 +500,8 @@ MyCoroutines = {
                     background-color: rgba(0,200,0,.45);
                 }
                 tr.selected td, tr.selected th{
-                    border: 2px solid green;
+                    border-top: 2px solid green;
+                    border-bottom: 2px solid green;
                     background-color: rgba(0,200,0,.1);
                 }
                 td, th {
