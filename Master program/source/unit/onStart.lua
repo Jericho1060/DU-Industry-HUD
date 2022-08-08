@@ -2,7 +2,7 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 3.0.7 - alpha"
+local version = "V 3.0.8 - alpha"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
@@ -335,13 +335,11 @@ MyCoroutines = {
         for i, element in pairs(elements) do
             if #elements > 0 then
                 local statusData = core.getElementIndustryInfoById(element.id)
-                local schematicId = statusData.schematicId or 0
+                local schematicId = 0
                 local recipeName = "-"
                 if #statusData.currentProducts > 0 then
                     local item = system.getItem(statusData.currentProducts[1].id)
-                    if schematicId == 0 then
-                        schematicId = item.schematics[1] or 0
-                    end
+                    schematicId = item.schematics[1] or 0
                     if item.locDisplayNameWithSize then
                         recipeName = item.locDisplayNameWithSize
                     end
