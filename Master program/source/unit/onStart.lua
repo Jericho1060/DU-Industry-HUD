@@ -2,7 +2,7 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 3.0.8 - alpha"
+local version = "V 3.0.9 - alpha"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
@@ -374,7 +374,7 @@ MyCoroutines = {
                 local unitsProduced = 0
                 if element.unitsProduced then unitsProduced = element.unitsProduced end
                 hud_machines_rows[i] = hud_machines_rows[i] .. '><th>' .. machine_id .. '</th><th><span class="' .. status_class .. '">' .. element.name .. '</span><br><small>' .. element.type .. '</small></th><th>' .. recipeName
-                if schematicId > 0 then
+                if schematicId > 0 and element.type:lower() ~= 'transfer unit' then
                     local schematic = system.getItem(schematicId)
                     local schematicsRemaining = statusData.schematicsRemaining
                     local schematic_color = "#fff"
@@ -674,6 +674,33 @@ runCoroutines = function()
 end
 
 MainCoroutine = coroutine.create(runCoroutines)
+
+function reloadMachinesOnTypeChange()
+    selected_type = elementsTypes[selected_index]
+    selected_machine_index = 1
+    page = 1
+    Storage.clear()
+    craft_quantity_digits = {"0","0","0","0","0","0","0","0"}
+    selectedElementsId = {}
+    hud_machines_rows = {}
+    elements = {}
+    selectedElementsId = {}
+    temp_selectedElementsId = {}
+    temp_elements_for_sorting = {}
+    temp_elements = {}
+    temp_refresh_id_list = {}
+    machineLoaded = false
+end
+
+function reloadMachinesOnPageChange()
+    selected_machine_index = 1
+    Storage.clear()
+    hud_machines_rows = {}
+    elements = {}
+    temp_elements_for_sorting = {}
+    temp_elements = {}
+    temp_refresh_id_list = {}
+end
 
 --Enable Display of the HUD
 system.showScreen(1)

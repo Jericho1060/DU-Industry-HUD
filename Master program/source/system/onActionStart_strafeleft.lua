@@ -1,10 +1,7 @@
 if page > 1 then
     page = page - 1
-    selected_machine_index = 1
-    Storage.clear()
-    hud_machines_rows = {}
-    elements = {}
-    temp_elements_for_sorting = {}
-    temp_elements = {}
-    temp_refresh_id_list = {}
+    reloadMachinesOnPageChange()
+elseif page ~= maxPage then
+    page = maxPage
+    reloadMachinesOnPageChange()
 end
