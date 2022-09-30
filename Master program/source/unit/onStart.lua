@@ -2,7 +2,7 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 3.0.9 - alpha"
+local version = "V 3.1.0 - alpha"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
