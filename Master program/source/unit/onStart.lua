@@ -2,10 +2,15 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 3.1.0 - alpha"
+local version = "V 3.1.1 - alpha"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
+
+--[[
+     Customisation options
+]]
+fontSize = 1 --export: the font size in percent of the height of the screen (default to 1)
 
 --[[
 	receivers channels for each type of machine
@@ -454,7 +459,7 @@ MyCoroutines = {
         hud_main_css = [[
             <style>
         	   * {
-        		  font-size: 1vh !important;
+        		  font-size: ]] .. fontSize .. [[vh !important;
         		  font-familly: "Play-Bold";
         	   }
                 .hud_container {
