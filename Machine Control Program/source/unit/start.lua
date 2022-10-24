@@ -2,7 +2,7 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 3.0.5 - alpha"
+local version = "V 4.0.0"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
@@ -78,6 +78,8 @@ if databank ~= nil then
                     slot.stop(true, false)
                 elseif command:lower() == "soft_stop" then
                     slot.stop(false, false)
+                elseif command:lower() == "hard_stop" then
+                    slot.stop(true, true)
                 end
                 databank.setStringValue(id, "")
             end

@@ -1,12 +1,7 @@
-if enableRemoteControl == true then
+if #databanks > 0 and emitter ~= nil and selected_machine ~= nil and (displayType == 0 or displayType == 1) then
     --Send Command 1
-    local selected_machine = elements[selected_machine_index]
     for _,db in pairs(databanks) do
         db.setStringValue(selected_machine.id, command_1)
     end
-    if emitter ~= nil then
-        emitter.send(channels[elementsTypes[selected_index]:lower()], "")
-    else
-        system.print("Emitter not Linked")
-    end
+    emitter.send(channels[selected_machine.typeFilter:lower()], "")
 end

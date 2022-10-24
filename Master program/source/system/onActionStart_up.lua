@@ -1,16 +1,10 @@
-if Ctrl_pressed == true then
-    if selected_index > 1 then
-        selected_index = selected_index - 1
-        reloadMachinesOnTypeChange()
-    else
-        selected_index = #elementsTypes
-        reloadMachinesOnTypeChange()
-    end
-else
-    if selected_machine_index > 1 then
-        selected_machine_index = selected_machine_index - 1
-    else
-        selected_machine_index = #elements
-    end
-    craft_quantity_digits = {"0","0","0","0","0","0","0","0"}
+if ctrlPressed and displayMode < 3 then
+    statusFilterType = statusFilterType - 1
+    local max = #elementsTypes
+    if statusFilterType < 0 then statusFilterType = maxFilterType end
+    onFilterChange()
+elseif displayMode < 3 then
+    selectedRow = selectedRow - 1
+    if selectedRow < 1 then selectedRow = maxOnPage end
+    onRowChange()
 end
