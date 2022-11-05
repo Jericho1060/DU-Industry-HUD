@@ -1,4 +1,4 @@
-version = "v4.1.0"
+version = "v4.1.2"
 --[[
     DU Industry HUD By Jericho
 ]]
@@ -26,7 +26,7 @@ enableRemoteControl = true --export: enable the HUD to control machines (start/s
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
 maxAmountOfElementsLoadedByFrame = 500 --export: if cpu load errors at start, lower that value
-machinesRefreshedByFrame = 100 --export: how many machines are refreshed by frame
+machinesRefreshedByFrame = 100 --how many machines are refreshed by frame
 machineDetailDisplayDistance = 0 --export: the distance in meters to display the machine details
 displayType = 0 --export: the default display type: 0=ALL, 1=Table, 2=Augmented Reality
 displayMode = 0 --export: the default display type: 0=ALL, 1=Industry Only, 2=Storage Only, 3=None
@@ -229,6 +229,7 @@ craft_quantity_digits = {"0","0","0","0","0","0","0","0"}
 --keyPressed
 ctrlPressed = false
 
+
 --[[
     DU INDUSTRY HUD By Jericho
 ]]
@@ -290,7 +291,7 @@ hud.coroutines.init = function()
             end
 
             if index % maxAmountOfElementsLoadedByFrame == 0 then
-                coroutine.yield(MyCoroutines[1])
+                coroutine.yield(self.init)
             end
         end
         elementsTypes = removeDuplicatesInTable(elementsTypes)
@@ -303,104 +304,106 @@ hud.coroutines.init = function()
     end
 end
 hud.coroutines.loadIndustries = function()
-    for index,id in ipairs(industries_id) do
-        local pos = machines_positions['i'..id]
-        local data = core.getElementIndustryInfoById(id)
-        if industries["i"..tostring(id)] == nil then industries["i"..tostring(id)] = {} end
-        local mode = ""
-        local tableMode = ""
-        local maintainOrBatchQuantity = 0
-        if data.maintainProductAmount > 0 then
-            mode = "<div><strong>Mode:</strong> Maintain " .. math.floor(data.currentProductAmount) .."/" .. math.floor(data.maintainProductAmount) .. "</div>"
-            tableMode = "Maintain " .. math.floor(data.currentProductAmount) .."/" .. math.floor(data.maintainProductAmount)
-            maintainOrBatchQuantity=math.floor(data.maintainProductAmount)
-        elseif data.batchesRequested > 0 and data.batchesRequested <= 99999999 then
-            local current = data.batchesRequested - data.batchesRemaining
-            if data.batchesRemaining < 0 then current = 0 end
-            mode = "<div><strong>Mode:</strong> Produce " .. math.floor(current) .. "/" .. math.floor(data.batchesRequested) .. "</div>"
-            tableMode = "Produce " .. math.floor(current) .. "/" .. math.floor(data.batchesRequested)
-            maintainOrBatchQuantity=math.floor(data.batchesRequested)
-        end
-        local production = {locDisplayNameWithSize="No recipe selected", tier=0}
-        local schematicName = ""
-        local tableSchematicName = ""
-        local state = data.state
-        local time=""
-        local tableTime=""
-        local recipe=""
-        local industryType = core.getElementDisplayNameById(id)
-        if #data.currentProducts > 0 then
-            local item_id = data.currentProducts[1].id
-            production = system.getItem(item_id)
-            if id ~= "947806142" and id ~= "1010524904" and not industryType:lower():find("transfer") then
-                if showRecipeData then
-                    local rdata = system.getRecipes(item_id)
-                    if #rdata > 0 then
-                        local r = nil
-                        for _,recipe in pairs(rdata) do
-                            if recipe.products[1].id == item_id then
-                                r = recipe
-                                break
+    if init and (displayMode == 0 or displayMode == 1) then
+        for index,id in ipairs(industries_id) do
+            local pos = machines_positions['i'..id]
+            local data = core.getElementIndustryInfoById(id)
+            if industries["i"..tostring(id)] == nil then industries["i"..tostring(id)] = {} end
+            local mode = ""
+            local tableMode = ""
+            local maintainOrBatchQuantity = 0
+            if data.maintainProductAmount > 0 then
+                mode = "<div><strong>Mode:</strong> Maintain " .. math.floor(data.currentProductAmount) .."/" .. math.floor(data.maintainProductAmount) .. "</div>"
+                tableMode = "Maintain " .. math.floor(data.currentProductAmount) .."/" .. math.floor(data.maintainProductAmount)
+                maintainOrBatchQuantity=math.floor(data.maintainProductAmount)
+            elseif data.batchesRequested > 0 and data.batchesRequested <= 99999999 then
+                local current = data.batchesRequested - data.batchesRemaining
+                if data.batchesRemaining < 0 then current = 0 end
+                mode = "<div><strong>Mode:</strong> Produce " .. math.floor(current) .. "/" .. math.floor(data.batchesRequested) .. "</div>"
+                tableMode = "Produce " .. math.floor(current) .. "/" .. math.floor(data.batchesRequested)
+                maintainOrBatchQuantity=math.floor(data.batchesRequested)
+            end
+            local production = {locDisplayNameWithSize="No recipe selected", tier=0}
+            local schematicName = ""
+            local tableSchematicName = ""
+            local state = data.state
+            local time=""
+            local tableTime=""
+            local recipe=""
+            local industryType = core.getElementDisplayNameById(id)
+            if #data.currentProducts > 0 then
+                local item_id = data.currentProducts[1].id
+                production = system.getItem(item_id)
+                if id ~= "947806142" and id ~= "1010524904" and not industryType:lower():find("transfer") then
+                    if showRecipeData then
+                        local rdata = system.getRecipes(item_id)
+                        if #rdata > 0 then
+                            local r = nil
+                            for _,recipe in pairs(rdata) do
+                                if recipe.products[1].id == item_id then
+                                    r = recipe
+                                    break
+                                end
                             end
-                        end
-                        if r then
-                            recipe = "<div><strong>Recipe:</strong>"
-                            for _,v in pairs(r.ingredients) do
-                                local item = system.getItem(v.id)
-                                recipe = recipe .. "<br>&nbsp;&nbsp;&nbsp;&nbsp;- " .. v.quantity .. " x " .. item.locDisplayNameWithSize
+                            if r then
+                                recipe = "<div><strong>Recipe:</strong>"
+                                for _,v in pairs(r.ingredients) do
+                                    local item = system.getItem(v.id)
+                                    recipe = recipe .. "<br>&nbsp;&nbsp;&nbsp;&nbsp;- " .. v.quantity .. " x " .. item.locDisplayNameWithSize
+                                end
+                                recipe = recipe .. "</div>"
                             end
-                            recipe = recipe .. "</div>"
                         end
                     end
+                    local schematicId = production.schematics[1] or 0
+                    if schematicId > 0 then
+                        local sch = system.getItem(schematicId)
+                        schematicName = "<div><strong>Schematic:</strong> " .. data.schematicsRemaining .. " " .. sch.locDisplayNameWithSize .. "</div>"
+                        tableSchematicName = sch.locDisplayNameWithSize
+                    end
                 end
-                local schematicId = production.schematics[1] or 0
-                if schematicId > 0 then
-                    local sch = system.getItem(schematicId)
-                    schematicName = "<div><strong>Schematic:</strong> " .. data.schematicsRemaining .. " " .. sch.locDisplayNameWithSize .. "</div>"
-                    tableSchematicName = sch.locDisplayNameWithSize
+                if data.remainingTime == 0 and data.state == 2 then
+                    state = 8
+                end
+                if data.stopRequested and data.state ~= 1 then
+                    state = 9
+                end
+                if data.remainingTime > 0 then
+                    time = "<div><strong>Time:</strong> " .. SecondsToClockString(data.remainingTime) .. "</div>"
+                    tableTime = SecondsToClockString(data.remainingTime)
                 end
             end
-            if data.remainingTime == 0 and data.state == 2 then
-                state = 8
+            local productionName = '<div><strong>Product</strong>: ' .. production.locDisplayNameWithSize .. '</div>'
+            local productId = ''
+            if production.id then
+                productId = "<div><strong>Main Product ID:</strong> " .. production.id .. "</div>"
             end
-            if data.stopRequested and data.state ~= 1 then
-                state = 9
+            local elementName = core.getElementNameById(id)
+            industries["i"..tostring(id)] = {
+                id=id,
+                screenPos=library.getPointOnScreen(ConvertLocalToWorld(pos, constructPos, constructRight, constructForward, constructUp)),
+                name="<div><strong>Industry Name:</strong> [" .. id .. "] " .. elementName .. "</div>",
+                tableName=elementName,
+                type="<div><strong>Industry Type:</strong> " .. industryType .. "</div>",
+                tableType=industryType,
+                typeFilter=removeQualityInName(industryType),
+                state=state,
+                production=production,
+                productId=productId,
+                productionName=productionName,
+                mode=mode,
+                tableMode=tableMode,
+                remainingTime=time,
+                tableTime=tableTime,
+                schematic=schematicName,
+                maintainOrBatchQuantity=maintainOrBatchQuantity,
+                tableSchematic=tableSchematicName,
+                recipe=recipe,
+                stopRequested=data.stopRequested
+            }
+            if index % machinesRefreshedByFrame == 0 then
+                coroutine.yield(self.loadIndustries)
             end
-            if data.remainingTime > 0 then
-                time = "<div><strong>Time:</strong> " .. SecondsToClockString(data.remainingTime) .. "</div>"
-                tableTime = SecondsToClockString(data.remainingTime)
-            end
-        end
-        local productionName = '<div><strong>Product</strong>: ' .. production.locDisplayNameWithSize .. '</div>'
-        local productId = ''
-        if production.id then
-            productId = "<div><strong>Main Product ID:</strong> " .. production.id .. "</div>"
-        end
-        local elementName = core.getElementNameById(id)
-        industries["i"..tostring(id)] = {
-            id=id,
-            screenPos=library.getPointOnScreen(ConvertLocalToWorld(pos, constructPos, constructRight, constructForward, constructUp)),
-            name="<div><strong>Industry Name:</strong> [" .. id .. "] " .. elementName .. "</div>",
-            tableName=elementName,
-            type="<div><strong>Industry Type:</strong> " .. industryType .. "</div>",
-            tableType=industryType,
-            typeFilter=removeQualityInName(industryType),
-            state=state,
-            production=production,
-            productId=productId,
-            productionName=productionName,
-            mode=mode,
-            tableMode=tableMode,
-            remainingTime=time,
-            tableTime=tableTime,
-            schematic=schematicName,
-            maintainOrBatchQuantity=maintainOrBatchQuantity,
-            tableSchematic=tableSchematicName,
-            recipe=recipe,
-            stopRequested=data.stopRequested
-        }
-        if index % machinesRefreshedByFrame == 0 then
-            coroutine.yield(MyCoroutines[2])
         end
     end
 end
@@ -499,7 +502,7 @@ hud.coroutines.loadStorage = function()
         end
         storages['i'..id] = container
         if index % machinesRefreshedByFrame == 0 then
-            coroutine.yield(MyCoroutines[3])
+            coroutine.yield(self.loadStorage)
         end
     end
 end
@@ -950,34 +953,21 @@ end
 ]]--
 
 coroutinesTable  = {}
---all functions here will become a coroutine
-MyCoroutines = {
-    hud.coroutines.init,
-    hud.coroutines.loadIndustries,
-    hud.coroutines.loadStorage,
-    hud.coroutines.renderHelper,
-    hud.coroutines.renderIndustries,
-    hud.coroutines.renderStorage,
-    hud.coroutines.renderFilterStatus,
-    hud.coroutines.renderFilterType,
-    hud.coroutines.renderSelectedAR,
-    hud.coroutines.renderControlSelectedIndustry,
-    hud.coroutines.renderHud,
-}
 
 function initCoroutines()
-    for _,f in pairs(MyCoroutines) do
-        local co = coroutine.create(f)
-        table.insert(coroutinesTable, co)
+    for k,f in pairs(hud.coroutines) do
+        coroutinesTable[k] = coroutine.create(f)
     end
 end
 
 initCoroutines()
 
+for k,f in pairs(coroutinesTable) do system.print(k) end
+
 runCoroutines = function()
-    for i,co in ipairs(coroutinesTable) do
+    for k,co in pairs(coroutinesTable) do
         if coroutine.status(co) == "dead" then
-            coroutinesTable[i] = coroutine.create(MyCoroutines[i])
+            coroutinesTable[k] = coroutine.create(hud.coroutines[k])
         end
         if coroutine.status(co) == "suspended" then
             assert(coroutine.resume(co))
