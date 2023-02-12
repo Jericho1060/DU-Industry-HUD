@@ -1,4 +1,4 @@
-version = "v4.1.2"
+version = "v4.2.0"
 --[[
     DU Industry HUD By Jericho
 ]]
@@ -63,7 +63,7 @@ function removeDuplicatesInTable(a)local b={}local c={}for d,e in ipairs(a)do if
 function getRGBGradient(a,b,c,d,e,f,g,h,i,j)a=-1*math.cos(a*math.pi)/2+0.5;local k=0;local l=0;local m=0;if a>=.5 then a=(a-0.5)*2;k=e-a*(e-h)l=f-a*(f-i)m=g-a*(g-j)else a=a*2;k=b-a*(b-e)l=c-a*(c-f)m=d-a*(d-g)end;return k,l,m end
 --time script to get client date and time by Jericho, see full source at https://github.com/Jericho1060/DualUniverse
 function DUCurrentDateTime(a)local b=system.getUtcTime()if not a then b=b+system.getUtcOffset()end;local c=24*60*60;local d=365*c;local e=d+c;local f=4*d+c;local g=4;local h=1970;local i={-1,30,58,89,119,150,180,211,242,272,303,333,364}local j={}for k=1,2 do j[k]=i[k]end;for k=3,13 do j[k]=i[k]+1 end;local l,m,n,o,p,q,r,s;local t=i;s=b;l=math.floor(s/f)s=s-l*f;l=l*4+h;if s>=d then l=l+1;s=s-d;if s>=d then l=l+1;s=s-d;if s>=e then l=l+1;s=s-e else t=j end end end;m=math.floor(s/c)s=s-m*c;local n=1;while t[n]<m do n=n+1 end;n=n-1;local o=m-t[n]p=(math.floor(b/c)+g)%7;if p==0 then p=7 end;q=math.floor(s/3600)s=s-q*3600;r=math.floor(s/60)function round(u,v)if v then return utils.round(u/v)*v end;return u>=0 and math.floor(u+0.5)or math.ceil(u-0.5)end;s=round(s-r*60)local w={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}local x={"Mon","Tue","Wed","Thu","Fri","Sat","Sun"}local y={"January","February","March","April","May","June","July","August","September","October","November","December"}local z={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"}return l,n,o,q,r,s,p,w[p],x[p],y[n],z[n],m+1 end
-
+    
 --databank hub library By Jericho, see full source at https://github.com/Jericho1060/DualUniverse
 bankhub={}function bankhub:new(banks)o={}setmetatable(o,self)self.__index=self;o.banks=banks or{}function o.clear()return o:_clear()end;function o.getNbKeys()return o:_getNbKeys()end;function o.getKeys()return o:_getKeys()end;function o.hasKey(a)return o:_hasKey(a)end;function o.getStringValue(a)return o:_getStringValue(a)end;function o.getIntValue(a)return o:_getIntValue(a)end;function o.getFloatValue(a)return o:_getFloatValue(a)end;return o end;function bankhub:add(b)table.insert(self.banks,b)self.banks_size=#self.banks end;function bankhub:_clear()for c,d in pairs(self.banks)do d.clear()end end;function bankhub:_getNbKeys()local e=0;for c,d in pairs(self.banks)do e=e+d.getNbKeys()end;return e end;function bankhub:_getKeys()local e={}for c,d in pairs(self.banks)do local f=json.decode(d.getKeys())for c,g in pairs(f)do table.insert(e,g)end end;return json.encode(e)end;function bankhub:_hasKey(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return 1 end end;return 0 end;function bankhub:_getStringValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return d.getStringValue(a)end end;return nil end;function bankhub:_getIntValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return banks.getIntValue(a)end end;return nil end;function bankhub:_getFloatValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return banks.getFloatValue(a)end end;return nil end
 --time script to get client date and time by Jericho, see full source at https://github.com/Jericho1060/DualUniverse
@@ -146,6 +146,9 @@ industries = {}
 storages = {}
 elementsTypes = {}
 storagesTypes = {}
+schematicContainer = nil
+schematicContainerId = construct.getSchematicContainerId()
+schematicStorage = {}
 for slot_name, slot in pairs(unit) do
     if
         type(slot) == "table"
@@ -154,12 +157,14 @@ for slot_name, slot in pairs(unit) do
     then
         if slot.getClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
-        end
-        if slot.getClass():lower():find("coreunit") then
+        elseif slot.getClass():lower():find("coreunit") then
             core = slot
-        end
-        if slot.getClass():lower() == 'emitterunit' then
+        elseif slot.getClass():lower() == 'emitterunit' then
             emitter = slot
+        elseif schematicContainerId ~= nil and slot.getClass():lower():find('container') then
+            if slot.getId() == schematicContainerId then
+                schematicContainer = slot
+            end
         end
     end
 end
@@ -168,11 +173,18 @@ if core == nil then
     system.print("Connection to the core is missing")
     unit.exit()
 end
-if emitter == nil then
+if schematicContainerId == nil then
+    system.print("No Schematic Container set on the Construct")
+end
+if schematicContainer == nil then
+    system.print("Schematic Container is not linked to the board")
+end
+
+if emitter == nil then 
     enableRemoteControl = false
     system.print("Connect an Emitter to enable machine control from industry")
 end
-if #databanks == 0 then
+if #databanks == 0 then 
     enableRemoteControl = false
     system.print("No Databank linked")
 end
@@ -233,8 +245,14 @@ ctrlPressed = false
 --[[
     DU INDUSTRY HUD By Jericho
 ]]
+schematicRefreshTime = 0
 hud = {}
 hud.coroutines = {}
+if schematicContainer ~= nil then
+    hud.coroutines.getSchematics = function ()
+        schematicRefreshTime = math.ceil(schematicContainer.updateContent())
+    end
+end
 hud.coroutines.init = function()
     if not init then
         elementsTypes = {}
@@ -326,11 +344,22 @@ hud.coroutines.loadIndustries = function()
             local production = {locDisplayNameWithSize="No recipe selected", tier=0}
             local schematicName = ""
             local tableSchematicName = ""
+            local tableSchematicQuantity = ""
+            local schematicColor = "success"
             local state = data.state
             local time=""
             local tableTime=""
             local recipe=""
             local industryType = core.getElementDisplayNameById(id)
+            local schematicId = data.requiredSchematicIds[1] or 0
+            if schematicId > 0 then
+                local sch = system.getItem(schematicId)
+                local shematicQuantity = schematicStorage["s" .. schematicId] or 0
+                if shematicQuantity < data.requiredSchematicAmount then schematicColor = "danger" end
+                schematicName = '<div><strong>Schematic:</strong> ' .. format_number(shematicQuantity):gsub(".0", "") .. "/" .. format_number(data.requiredSchematicAmount) .. " " .. sch.locDisplayNameWithSize .. "</div>"
+                tableSchematicName = sch.locDisplayNameWithSize
+                tableSchematicQuantity = format_number(shematicQuantity):gsub(".0", "") .. "/" .. format_number(data.requiredSchematicAmount)
+            end
             if #data.currentProducts > 0 then
                 local item_id = data.currentProducts[1].id
                 production = system.getItem(item_id)
@@ -354,12 +383,6 @@ hud.coroutines.loadIndustries = function()
                                 recipe = recipe .. "</div>"
                             end
                         end
-                    end
-                    local schematicId = production.schematics[1] or 0
-                    if schematicId > 0 then
-                        local sch = system.getItem(schematicId)
-                        schematicName = "<div><strong>Schematic:</strong> " .. data.schematicsRemaining .. " " .. sch.locDisplayNameWithSize .. "</div>"
-                        tableSchematicName = sch.locDisplayNameWithSize
                     end
                 end
                 if data.remainingTime == 0 and data.state == 2 then
@@ -396,8 +419,10 @@ hud.coroutines.loadIndustries = function()
                 remainingTime=time,
                 tableTime=tableTime,
                 schematic=schematicName,
+                schematicColor=schematicColor,
                 maintainOrBatchQuantity=maintainOrBatchQuantity,
                 tableSchematic=tableSchematicName,
+                tableSchematicQuantity=tableSchematicQuantity,
                 recipe=recipe,
                 stopRequested=data.stopRequested
             }
@@ -525,6 +550,9 @@ hud.coroutines.renderHelper = function()
     end
     html_time = html_time .. ' - Display Mode - Alt + 8</div>'
     html_time = html_time .. '<div>Reload HUD - Alt + 9</div>'
+    if schematicContainer ~= nil then
+        html_time = html_time .. '<hr class="hr-light"><div>Schematic Storage Refresh in ' .. schematicRefreshTime .. 's</div>'
+    end
     html_time = html_time .. '</div></div>'
 end
 hud.coroutines.renderIndustries = function()
@@ -589,7 +617,7 @@ hud.coroutines.renderIndustries = function()
                     selectedMachine = industry
                 end
                 if count >= firstMachine and count <= lastMachine then
-                    html_table = html_table .. '<tr><th class="' .. selectedClass .. '">' .. industry.id .. '</th><th class="' .. selectedClass .. '"><span class="' .. getIndustryStatusClass(industry.state) .. '">' .. industry.tableName .. '</span><br><small>' .. industry.tableType .. '</small></th><th class="' .. selectedClass .. '">' .. industry.production.locDisplayNameWithSize .. '<br><small>' .. industry.tableSchematic .. '</small></th><th class="' .. selectedClass .. '"><span class="' .. getIndustryStatusClass(industry.state) .. '">' .. statusList[industry.state] .. '</span></th><th class="' .. selectedClass .. '">' .. industry.tableMode .. '</th><th class="' .. selectedClass .. '">' .. industry.tableTime .. '</th></tr>'
+                    html_table = html_table .. '<tr><th class="' .. selectedClass .. '">' .. industry.id .. '</th><th class="' .. selectedClass .. '"><span class="' .. getIndustryStatusClass(industry.state) .. '">' .. industry.tableName .. '</span><br><small>' .. industry.tableType .. '</small></th><th class="' .. selectedClass .. '">' .. industry.production.locDisplayNameWithSize .. '<br><small class="text-' .. industry.schematicColor .. '">' .. industry.tableSchematicQuantity .. " " .. industry.tableSchematic .. '</small></th><th class="' .. selectedClass .. '"><span class="' .. getIndustryStatusClass(industry.state) .. '">' .. statusList[industry.state] .. '</span></th><th class="' .. selectedClass .. '">' .. industry.tableMode .. '</th><th class="' .. selectedClass .. '">' .. industry.tableTime .. '</th></tr>'
                 end
             end
             count = count + 1
