@@ -1,4 +1,4 @@
-version = "v4.2.0"
+version = "v4.2.1"
 --[[
     DU Industry HUD By Jericho
 ]]
@@ -63,7 +63,7 @@ function removeDuplicatesInTable(a)local b={}local c={}for d,e in ipairs(a)do if
 function getRGBGradient(a,b,c,d,e,f,g,h,i,j)a=-1*math.cos(a*math.pi)/2+0.5;local k=0;local l=0;local m=0;if a>=.5 then a=(a-0.5)*2;k=e-a*(e-h)l=f-a*(f-i)m=g-a*(g-j)else a=a*2;k=b-a*(b-e)l=c-a*(c-f)m=d-a*(d-g)end;return k,l,m end
 --time script to get client date and time by Jericho, see full source at https://github.com/Jericho1060/DualUniverse
 function DUCurrentDateTime(a)local b=system.getUtcTime()if not a then b=b+system.getUtcOffset()end;local c=24*60*60;local d=365*c;local e=d+c;local f=4*d+c;local g=4;local h=1970;local i={-1,30,58,89,119,150,180,211,242,272,303,333,364}local j={}for k=1,2 do j[k]=i[k]end;for k=3,13 do j[k]=i[k]+1 end;local l,m,n,o,p,q,r,s;local t=i;s=b;l=math.floor(s/f)s=s-l*f;l=l*4+h;if s>=d then l=l+1;s=s-d;if s>=d then l=l+1;s=s-d;if s>=e then l=l+1;s=s-e else t=j end end end;m=math.floor(s/c)s=s-m*c;local n=1;while t[n]<m do n=n+1 end;n=n-1;local o=m-t[n]p=(math.floor(b/c)+g)%7;if p==0 then p=7 end;q=math.floor(s/3600)s=s-q*3600;r=math.floor(s/60)function round(u,v)if v then return utils.round(u/v)*v end;return u>=0 and math.floor(u+0.5)or math.ceil(u-0.5)end;s=round(s-r*60)local w={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}local x={"Mon","Tue","Wed","Thu","Fri","Sat","Sun"}local y={"January","February","March","April","May","June","July","August","September","October","November","December"}local z={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"}return l,n,o,q,r,s,p,w[p],x[p],y[n],z[n],m+1 end
-    
+
 --databank hub library By Jericho, see full source at https://github.com/Jericho1060/DualUniverse
 bankhub={}function bankhub:new(banks)o={}setmetatable(o,self)self.__index=self;o.banks=banks or{}function o.clear()return o:_clear()end;function o.getNbKeys()return o:_getNbKeys()end;function o.getKeys()return o:_getKeys()end;function o.hasKey(a)return o:_hasKey(a)end;function o.getStringValue(a)return o:_getStringValue(a)end;function o.getIntValue(a)return o:_getIntValue(a)end;function o.getFloatValue(a)return o:_getFloatValue(a)end;return o end;function bankhub:add(b)table.insert(self.banks,b)self.banks_size=#self.banks end;function bankhub:_clear()for c,d in pairs(self.banks)do d.clear()end end;function bankhub:_getNbKeys()local e=0;for c,d in pairs(self.banks)do e=e+d.getNbKeys()end;return e end;function bankhub:_getKeys()local e={}for c,d in pairs(self.banks)do local f=json.decode(d.getKeys())for c,g in pairs(f)do table.insert(e,g)end end;return json.encode(e)end;function bankhub:_hasKey(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return 1 end end;return 0 end;function bankhub:_getStringValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return d.getStringValue(a)end end;return nil end;function bankhub:_getIntValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return banks.getIntValue(a)end end;return nil end;function bankhub:_getFloatValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return banks.getFloatValue(a)end end;return nil end
 --time script to get client date and time by Jericho, see full source at https://github.com/Jericho1060/DualUniverse
@@ -151,9 +151,9 @@ schematicContainerId = construct.getSchematicContainerId()
 schematicStorage = {}
 for slot_name, slot in pairs(unit) do
     if
-        type(slot) == "table"
-        and type(slot.export) == "table"
-        and slot.getClass
+    type(slot) == "table"
+            and type(slot.export) == "table"
+            and slot.getClass
     then
         if slot.getClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
@@ -180,11 +180,11 @@ if schematicContainer == nil then
     system.print("Schematic Container is not linked to the board")
 end
 
-if emitter == nil then 
+if emitter == nil then
     enableRemoteControl = false
     system.print("Connect an Emitter to enable machine control from industry")
 end
-if #databanks == 0 then 
+if #databanks == 0 then
     enableRemoteControl = false
     system.print("No Databank linked")
 end
@@ -268,22 +268,22 @@ hud.coroutines.init = function()
         for index,id in ipairs(elementsIdList) do
             elementType = core.getElementDisplayNameById(id):lower()
             if (elementType:find("assembly line") and enableAssemblyMonitoring == true) or
-                (elementType:find("glass furnace") and enableGlassMonitoring == true) or
-                (elementType:find("3d printer") and enable3DPrinterMonitoring == true) or
-                (elementType:find("smelter") and enableSmelterMonitoring == true) or
-                (elementType:find("recycler") and enableRecyclerMonitoring == true) or
-                (elementType:find("refinery") and enableHoneycombMonitoring == true) or
-                (elementType:find("refiner") and enableRefinerMonitoring == true) or
-                (elementType:find("industry")
-                    and (
-                        (elementType:find("chemical") and enableChemicalMonitoring == true) or
-                        (elementType:find("electronics") and enableElectronicsMonitoring == true) or
-                        (elementType:find("metalwork") and enableMetalworkMonitoring == true)
+                    (elementType:find("glass furnace") and enableGlassMonitoring == true) or
+                    (elementType:find("3d printer") and enable3DPrinterMonitoring == true) or
+                    (elementType:find("smelter") and enableSmelterMonitoring == true) or
+                    (elementType:find("recycler") and enableRecyclerMonitoring == true) or
+                    (elementType:find("refinery") and enableHoneycombMonitoring == true) or
+                    (elementType:find("refiner") and enableRefinerMonitoring == true) or
+                    (elementType:find("industry")
+                            and (
+                            (elementType:find("chemical") and enableChemicalMonitoring == true) or
+                                    (elementType:find("electronics") and enableElectronicsMonitoring == true) or
+                                    (elementType:find("metalwork") and enableMetalworkMonitoring == true)
                     )
-                ) or
-                (elementType == "transfer unit" and enableTransferMonitoring == true) or
-                elementType:lower():find("container")
-                then
+                    ) or
+                    (elementType == "transfer unit" and enableTransferMonitoring == true) or
+                    elementType:lower():find("container")
+            then
                 local formatedType = removeQualityInName(elementType)
                 local pos = core.getElementPositionById(id)
                 if elementType:lower():find("container") then
@@ -352,7 +352,7 @@ hud.coroutines.loadIndustries = function()
             local recipe=""
             local industryType = core.getElementDisplayNameById(id)
             local schematicId = data.requiredSchematicIds[1] or 0
-            if schematicId > 0 then
+            if schematicId > 0 and not industryType:lower():find("transfer") then
                 local sch = system.getItem(schematicId)
                 local shematicQuantity = schematicStorage["s" .. schematicId] or 0
                 if shematicQuantity < data.requiredSchematicAmount then schematicColor = "danger" end
