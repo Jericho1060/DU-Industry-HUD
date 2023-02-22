@@ -1,4 +1,4 @@
-version = "v4.2.1"
+version = "v4.3.0"
 --[[
     DU Industry HUD By Jericho
 ]]
@@ -22,6 +22,7 @@ enableRecyclerMonitoring = true --export: enable or disable the Recyclers monito
 enableMetalworkMonitoring = true --export: enable or disable the Metalworks monitoring
 enable3DPrinterMonitoring = true --export: enable or disable the 3D Printers monitoring
 enableTransferMonitoring = true --export: enable or disable the transfer units monitoring
+enableStorageMonitoring = true --export: enable or disable the storage monitoring
 enableRemoteControl = true --export: enable the HUD to control machines (start/stop/batch/maintain)
 elementsByPage = 20 --export: maximum amount of elements displayed on a single page
 dateFormat = "en" --export: the country code to format the date
@@ -63,7 +64,7 @@ function removeDuplicatesInTable(a)local b={}local c={}for d,e in ipairs(a)do if
 function getRGBGradient(a,b,c,d,e,f,g,h,i,j)a=-1*math.cos(a*math.pi)/2+0.5;local k=0;local l=0;local m=0;if a>=.5 then a=(a-0.5)*2;k=e-a*(e-h)l=f-a*(f-i)m=g-a*(g-j)else a=a*2;k=b-a*(b-e)l=c-a*(c-f)m=d-a*(d-g)end;return k,l,m end
 --time script to get client date and time by Jericho, see full source at https://github.com/Jericho1060/DualUniverse
 function DUCurrentDateTime(a)local b=system.getUtcTime()if not a then b=b+system.getUtcOffset()end;local c=24*60*60;local d=365*c;local e=d+c;local f=4*d+c;local g=4;local h=1970;local i={-1,30,58,89,119,150,180,211,242,272,303,333,364}local j={}for k=1,2 do j[k]=i[k]end;for k=3,13 do j[k]=i[k]+1 end;local l,m,n,o,p,q,r,s;local t=i;s=b;l=math.floor(s/f)s=s-l*f;l=l*4+h;if s>=d then l=l+1;s=s-d;if s>=d then l=l+1;s=s-d;if s>=e then l=l+1;s=s-e else t=j end end end;m=math.floor(s/c)s=s-m*c;local n=1;while t[n]<m do n=n+1 end;n=n-1;local o=m-t[n]p=(math.floor(b/c)+g)%7;if p==0 then p=7 end;q=math.floor(s/3600)s=s-q*3600;r=math.floor(s/60)function round(u,v)if v then return utils.round(u/v)*v end;return u>=0 and math.floor(u+0.5)or math.ceil(u-0.5)end;s=round(s-r*60)local w={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}local x={"Mon","Tue","Wed","Thu","Fri","Sat","Sun"}local y={"January","February","March","April","May","June","July","August","September","October","November","December"}local z={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"}return l,n,o,q,r,s,p,w[p],x[p],y[n],z[n],m+1 end
-    
+
 --databank hub library By Jericho, see full source at https://github.com/Jericho1060/DualUniverse
 bankhub={}function bankhub:new(banks)o={}setmetatable(o,self)self.__index=self;o.banks=banks or{}function o.clear()return o:_clear()end;function o.getNbKeys()return o:_getNbKeys()end;function o.getKeys()return o:_getKeys()end;function o.hasKey(a)return o:_hasKey(a)end;function o.getStringValue(a)return o:_getStringValue(a)end;function o.getIntValue(a)return o:_getIntValue(a)end;function o.getFloatValue(a)return o:_getFloatValue(a)end;return o end;function bankhub:add(b)table.insert(self.banks,b)self.banks_size=#self.banks end;function bankhub:_clear()for c,d in pairs(self.banks)do d.clear()end end;function bankhub:_getNbKeys()local e=0;for c,d in pairs(self.banks)do e=e+d.getNbKeys()end;return e end;function bankhub:_getKeys()local e={}for c,d in pairs(self.banks)do local f=json.decode(d.getKeys())for c,g in pairs(f)do table.insert(e,g)end end;return json.encode(e)end;function bankhub:_hasKey(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return 1 end end;return 0 end;function bankhub:_getStringValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return d.getStringValue(a)end end;return nil end;function bankhub:_getIntValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return banks.getIntValue(a)end end;return nil end;function bankhub:_getFloatValue(a)for c,d in pairs(self.banks)do if d.hasKey(a)==1 then return banks.getFloatValue(a)end end;return nil end
 --time script to get client date and time by Jericho, see full source at https://github.com/Jericho1060/DualUniverse
@@ -151,9 +152,9 @@ schematicContainerId = construct.getSchematicContainerId()
 schematicStorage = {}
 for slot_name, slot in pairs(unit) do
     if
-        type(slot) == "table"
-        and type(slot.export) == "table"
-        and slot.getClass
+    type(slot) == "table"
+            and type(slot.export) == "table"
+            and slot.getClass
     then
         if slot.getClass():lower() == 'databankunit' then
             table.insert(databanks, slot)
@@ -180,11 +181,11 @@ if schematicContainer == nil then
     system.print("Schematic Container is not linked to the board")
 end
 
-if emitter == nil then 
+if emitter == nil then
     enableRemoteControl = false
     system.print("Connect an Emitter to enable machine control from industry")
 end
-if #databanks == 0 then 
+if #databanks == 0 then
     enableRemoteControl = false
     system.print("No Databank linked")
 end
@@ -202,6 +203,9 @@ constructUp = construct.getWorldUp()
 storage_prefix = strSplit(storages_prefix_list, ',')
 displayTypes = {"ALL", "Table", "Augmented Reality"}
 displayModes = {"ALL", "Industry", "Storage", "None"}
+if not enableStorageMonitoring then
+    displayModes = {"ALL", "Industry", "None"}
+end
 sortingTypes = {"Element Name", "Item", "Element ID"}
 init = false
 initIndex = 1
@@ -268,25 +272,25 @@ hud.coroutines.init = function()
         for index,id in ipairs(elementsIdList) do
             elementType = core.getElementDisplayNameById(id):lower()
             if (elementType:find("assembly line") and enableAssemblyMonitoring == true) or
-                (elementType:find("glass furnace") and enableGlassMonitoring == true) or
-                (elementType:find("3d printer") and enable3DPrinterMonitoring == true) or
-                (elementType:find("smelter") and enableSmelterMonitoring == true) or
-                (elementType:find("recycler") and enableRecyclerMonitoring == true) or
-                (elementType:find("refinery") and enableHoneycombMonitoring == true) or
-                (elementType:find("refiner") and enableRefinerMonitoring == true) or
-                (elementType:find("industry")
-                    and (
-                        (elementType:find("chemical") and enableChemicalMonitoring == true) or
-                        (elementType:find("electronics") and enableElectronicsMonitoring == true) or
-                        (elementType:find("metalwork") and enableMetalworkMonitoring == true)
+                    (elementType:find("glass furnace") and enableGlassMonitoring == true) or
+                    (elementType:find("3d printer") and enable3DPrinterMonitoring == true) or
+                    (elementType:find("smelter") and enableSmelterMonitoring == true) or
+                    (elementType:find("recycler") and enableRecyclerMonitoring == true) or
+                    (elementType:find("refinery") and enableHoneycombMonitoring == true) or
+                    (elementType:find("refiner") and enableRefinerMonitoring == true) or
+                    (elementType:find("industry")
+                            and (
+                            (elementType:find("chemical") and enableChemicalMonitoring == true) or
+                                    (elementType:find("electronics") and enableElectronicsMonitoring == true) or
+                                    (elementType:find("metalwork") and enableMetalworkMonitoring == true)
                     )
-                ) or
-                (elementType == "transfer unit" and enableTransferMonitoring == true) or
-                elementType:lower():find("container")
-                then
+                    ) or
+                    (elementType == "transfer unit" and enableTransferMonitoring == true) or
+                    elementType:lower():find("container")
+            then
                 local formatedType = removeQualityInName(elementType)
                 local pos = core.getElementPositionById(id)
-                if elementType:lower():find("container") then
+                if elementType:lower():find("container") and enableStorageMonitoring then
                     if storages_count[formatedType] ~= nil then
                         storages_count[formatedType] = storages_count[formatedType] + 1
                     else
@@ -295,7 +299,7 @@ hud.coroutines.init = function()
                     table.insert(storages_id, id)
                     storages_positions['i'..id] = pos
                     table.insert(storagesTypes, formatedType)
-                else
+                elseif not elementType:lower():find("container") then
                     pos[3] = pos[3] + 1
                     if machines_count[formatedType] ~= nil then
                         machines_count[formatedType] = machines_count[formatedType] + 1
@@ -309,7 +313,7 @@ hud.coroutines.init = function()
             end
 
             if index % maxAmountOfElementsLoadedByFrame == 0 then
-                coroutine.yield(self.init)
+                coroutine.yield()
             end
         end
         elementsTypes = removeDuplicatesInTable(elementsTypes)
@@ -427,107 +431,111 @@ hud.coroutines.loadIndustries = function()
                 stopRequested=data.stopRequested
             }
             if index % machinesRefreshedByFrame == 0 then
-                coroutine.yield(self.loadIndustries)
+                coroutine.yield()
             end
         end
     end
 end
-hud.coroutines.loadStorage = function()
-    for index,id in ipairs(storages_id) do
-        local pos = storages_positions['i'..id]
-        local elementType = core.getElementDisplayNameById(id)
-        local base_name = core.getElementNameById(id)
-        local splitted = strSplit(base_name,'_')
-        local item_id = nil
-        local prefix = nil
-        if #splitted > 1 then
-            prefix = splitted[1]
-            item_id = splitted[2]
-        end
-        local container = {
-            id = id,
-            type=elementType,
-            name = "[" .. id .. "] " .. base_name,
-            tableName = base_name,
-            prefix = prefix,
-            item_id = item_id,
-            monitor = false,
-            screenPos=library.getPointOnScreen(ConvertLocalToWorld(pos, constructPos, constructRight, constructForward, constructUp)),
-        }
-        if item_id and prefix then
-            for _,sprefix in ipairs(storage_prefix) do
-                if prefix:lower() == sprefix:lower() then
-                    container.monitor = true
-                    container.item = system.getItem(item_id)
-                    break
+if enableStorageMonitoring then
+    hud.coroutines.loadStorage = function()
+        if init and (displayMode == 0 or displayMode == 2) then
+            for index,id in ipairs(storages_id) do
+                local pos = storages_positions['i'..id]
+                local elementType = core.getElementDisplayNameById(id)
+                local base_name = core.getElementNameById(id)
+                local splitted = strSplit(base_name,'_')
+                local item_id = nil
+                local prefix = nil
+                if #splitted > 1 then
+                    prefix = splitted[1]
+                    item_id = splitted[2]
+                end
+                local container = {
+                    id = id,
+                    type=elementType,
+                    name = "[" .. id .. "] " .. base_name,
+                    tableName = base_name,
+                    prefix = prefix,
+                    item_id = item_id,
+                    monitor = false,
+                    screenPos=library.getPointOnScreen(ConvertLocalToWorld(pos, constructPos, constructRight, constructForward, constructUp)),
+                }
+                if item_id and prefix then
+                    for _,sprefix in ipairs(storage_prefix) do
+                        if prefix:lower() == sprefix:lower() then
+                            container.monitor = true
+                            container.item = system.getItem(item_id)
+                            break
+                        end
+                    end
+                end
+                local container_size = "XS"
+                local container_empty_mass = 0
+                local container_volume = 0
+                local contentQuantity = 0
+                local percent_fill = 0
+                if not elementType:lower():find("hub") then
+                    local containerMaxHP = core.getElementMaxHitPointsById(id)
+                    if containerMaxHP > 68000 then
+                        container_size = "XXL"
+                        container_empty_mass = 88410
+                        container_volume = 512000 * (containerProficiencyLvl * 0.1) + 512000
+                    elseif containerMaxHP > 33000 then
+                        container_size = "XL"
+                        container_empty_mass = 44210
+                        container_volume = 256000 * (containerProficiencyLvl * 0.1) + 256000
+                    elseif containerMaxHP > 17000 then
+                        container_size = "L"
+                        container_empty_mass = 14842.7
+                        container_volume = 128000 * (containerProficiencyLvl * 0.1) + 128000
+                    elseif containerMaxHP > 7900 then
+                        container_size = "M"
+                        container_empty_mass = 7421.35
+                        container_volume = 64000 * (containerProficiencyLvl * 0.1) + 64000
+                    elseif containerMaxHP > 900 then
+                        container_size = "S"
+                        container_empty_mass = 1281.31
+                        container_volume = 8000 * (containerProficiencyLvl * 0.1) + 8000
+                    else
+                        container_size = "XS"
+                        container_empty_mass = 229.09
+                        container_volume = 1000 * (containerProficiencyLvl * 0.1) + 1000
+                    end
+                else
+                    if splitted[3] then
+                        container_size = splitted[3]
+                    end
+                    if splitted[4] then
+                        container_amount = splitted[4]
+                    end
+                    local volume = 0
+                    container_volume_list = {xxl=512000, xl=256000, l=128000, m=64000, s=8000, xs=1000}
+                    container_size = container_size:lower()
+                    if container_volume_list[container_size] then
+                        volume = container_volume_list[container_size]
+                    end
+                    container_volume = (volume * containerProficiencyLvl * 0.1 + volume)
+                    container_empty_mass = 55.8
+                end
+                local totalMass = core.getElementMassById(id)
+                local contentMassKg = totalMass - container_empty_mass
+                container.totalMass = totalMass
+                container.emptyMass = container_empty_mass
+                container.contentMass = contentMassKg
+                container.maxVolume = container_volume
+                container.size = container_size
+                if container.item == nil or container.item.name == "InvalidItem" then
+                    container.percent = 0
+                    container.quantity = 0
+                else
+                    container.quantity = contentMassKg / (container.item.unitMass - (container.item.unitMass * (containerOptimizationLvl * 0.05)))
+                    container.percent = utils.round((container.item.unitVolume * container.quantity) * 100 / container_volume)
+                end
+                storages['i'..id] = container
+                if index % machinesRefreshedByFrame == 0 then
+                    coroutine.yield()
                 end
             end
-        end
-        local container_size = "XS"
-        local container_empty_mass = 0
-        local container_volume = 0
-        local contentQuantity = 0
-        local percent_fill = 0
-        if not elementType:lower():find("hub") then
-            local containerMaxHP = core.getElementMaxHitPointsById(id)
-            if containerMaxHP > 68000 then
-                container_size = "XXL"
-                container_empty_mass = 88410
-                container_volume = 512000 * (containerProficiencyLvl * 0.1) + 512000
-            elseif containerMaxHP > 33000 then
-                container_size = "XL"
-                container_empty_mass = 44210
-                container_volume = 256000 * (containerProficiencyLvl * 0.1) + 256000
-            elseif containerMaxHP > 17000 then
-                container_size = "L"
-                container_empty_mass = 14842.7
-                container_volume = 128000 * (containerProficiencyLvl * 0.1) + 128000
-            elseif containerMaxHP > 7900 then
-                container_size = "M"
-                container_empty_mass = 7421.35
-                container_volume = 64000 * (containerProficiencyLvl * 0.1) + 64000
-            elseif containerMaxHP > 900 then
-                container_size = "S"
-                container_empty_mass = 1281.31
-                container_volume = 8000 * (containerProficiencyLvl * 0.1) + 8000
-            else
-                container_size = "XS"
-                container_empty_mass = 229.09
-                container_volume = 1000 * (containerProficiencyLvl * 0.1) + 1000
-            end
-        else
-            if splitted[3] then
-                container_size = splitted[3]
-            end
-            if splitted[4] then
-                container_amount = splitted[4]
-            end
-            local volume = 0
-            container_volume_list = {xxl=512000, xl=256000, l=128000, m=64000, s=8000, xs=1000}
-            container_size = container_size:lower()
-            if container_volume_list[container_size] then
-                volume = container_volume_list[container_size]
-            end
-            container_volume = (volume * containerProficiencyLvl * 0.1 + volume)
-            container_empty_mass = 55.8
-        end
-        local totalMass = core.getElementMassById(id)
-        local contentMassKg = totalMass - container_empty_mass
-        container.totalMass = totalMass
-        container.emptyMass = container_empty_mass
-        container.contentMass = contentMassKg
-        container.maxVolume = container_volume
-        container.size = container_size
-        if container.item == nil or container.item.name == "InvalidItem" then
-            container.percent = 0
-            container.quantity = 0
-        else
-            container.quantity = contentMassKg / (container.item.unitMass - (container.item.unitMass * (containerOptimizationLvl * 0.05)))
-            container.percent = utils.round((container.item.unitVolume * container.quantity) * 100 / container_volume)
-        end
-        storages['i'..id] = container
-        if index % machinesRefreshedByFrame == 0 then
-            coroutine.yield(self.loadStorage)
         end
     end
 end
@@ -631,43 +639,90 @@ hud.coroutines.renderIndustries = function()
     html_machines = html .. html_table
     selected_machine = selectedMachine
 end
-hud.coroutines.renderStorage = function()
-    local html = ""
-    local html_table = ""
-    local lastStorage = 0
-    local firstStorage = 0
-    local totalPage = 1
-    local selectedStorage = nil
-    if displayMode == 0 or displayMode == 2 then
-        local selectedStorages = {}
-        for k,storage in pairs(storages) do
-            if statusFilterType >= maxFilterType and storage.monitor then
-                if displayType == 0 then
-                    table.insert(selectedStorages, storage)
-                elseif displayType == 1 then
-                    table.insert(selectedStorages, storage)
+if enableStorageMonitoring then
+    hud.coroutines.renderStorage = function()
+        local html = ""
+        local html_table = ""
+        local lastStorage = 0
+        local firstStorage = 0
+        local totalPage = 1
+        local selectedStorage = nil
+        if displayMode == 0 or displayMode == 2 then
+            local selectedStorages = {}
+            for k,storage in pairs(storages) do
+                if statusFilterType >= maxFilterType and storage.monitor then
+                    if displayType == 0 then
+                        table.insert(selectedStorages, storage)
+                    elseif displayType == 1 then
+                        table.insert(selectedStorages, storage)
+                    end
                 end
             end
-        end
-        if (displayType == 0 or displayType == 2) then
-            for k,storage in pairs(storages) do
-                if storage.screenPos[1] > 0 and storage.screenPos[1] < 1 and storage.screenPos[2] > 0 and storage.screenPos[2] < 1 then
-                    local showDetail = false
-                    if storage.screenPos[3] <= machineDetailDisplayDistance then
-                        showDetail = true
-                    elseif storage.screenPos[1] < 0.55 and storage.screenPos[1] > 0.45 and storage.screenPos[2] < 0.55 and storage.screenPos[2] > 0.45 then
-                        showDetail = true
+            if (displayType == 0 or displayType == 2) then
+                for k,storage in pairs(storages) do
+                    if storage.screenPos[1] > 0 and storage.screenPos[1] < 1 and storage.screenPos[2] > 0 and storage.screenPos[2] < 1 then
+                        local showDetail = false
+                        if storage.screenPos[3] <= machineDetailDisplayDistance then
+                            showDetail = true
+                        elseif storage.screenPos[1] < 0.55 and storage.screenPos[1] > 0.45 and storage.screenPos[2] < 0.55 and storage.screenPos[2] > 0.45 then
+                            showDetail = true
+                        end
+                        local font_size = fontSize * ((200-storage.screenPos[3])/200)
+                        local zindex = utils.round(1000 - storage.screenPos[3])
+                        local displayName = storage.name
+                        local tierBox = ''
+                        local itemBox = ''
+                        local fillGauge = ''
+                        if storage.item ~= nil and storage.item.name ~= "InvalidItem" then
+                            displayName = format_number(utils.round(storage.quantity*100)/100) .. " " .. storage.item.locDisplayNameWithSize .. " (" .. storage.percent .. "%)"
+                            tierBox = '<span class="tier' .. storage.item.tier .. '">T' .. storage.item.tier .. '</span>'
+                            local i = storage.item
+                            local gaugePercent = storage.percent
+                            if storage.percent > 100 then
+                                gaugePercent = 100
+                            end
+                            local r,g,b = getRGBGradient(gaugePercent/100,177,42,42,249,212,123,34,177,76)
+                            r = utils.round(r)
+                            g = utils.round(g)
+                            b = utils.round(b)
+                            itemBox = [[<hr><div><strong>Item ID:</strong> ]] .. i.id .. [[</div><div><strong>Item Name:</strong> ]] .. i.locDisplayNameWithSize .. [[</div><div><strong>Item Unit Mass:</strong> ]] .. i.unitMass .. [[ kg</div><div><strong>Item Unit Volume:</strong> ]] .. i.unitVolume .. [[ m<sup>3</sup></div>]]
+                            fillGauge = '<div style="position:absolute;bottom:0;left:0px;width:' .. gaugePercent .. '%;background-color:rgb(' .. r .. ',' .. g ..',' .. b .. ');height:3px;z-index:' .. (zindex+1) .. ';"></div>'
+                        end
+                        html = html .. [[<div class="ib" style="left:]] .. utils.round(storage.screenPos[1]*100) .. [[%;top:]] .. utils.round(storage.screenPos[2]*100) .. [[%;font-size:]] .. font_size .. [[px;z-index:]]..zindex..[[;"><div class="bg-light text-dark" style="padding:2px;padding-bottom:5px;text-transform:capitalize;position:relative;">]] .. tierBox .. [[<strong>]] .. displayName .. [[</strong>]] .. fillGauge .. [[</div>]]
+                        if showDetail then
+                            html = html .. [[<div class="bg-light text-dark" style="margin-top:2px;padding:2px;"><div><strong>Container Type:</strong> ]] .. storage.type .. " " .. storage.size .. [[</div>]] .. itemBox .. [[</div></div>]]
+                        end
+                        html = html .. [[</div>]]
                     end
-                    local font_size = fontSize * ((200-storage.screenPos[3])/200)
-                    local zindex = utils.round(1000 - storage.screenPos[3])
-                    local displayName = storage.name
-                    local tierBox = ''
-                    local itemBox = ''
-                    local fillGauge = ''
-                    if storage.item ~= nil and storage.item.name ~= "InvalidItem" then
-                        displayName = format_number(utils.round(storage.quantity*100)/100) .. " " .. storage.item.locDisplayNameWithSize .. " (" .. storage.percent .. "%)"
-                        tierBox = '<span class="tier' .. storage.item.tier .. '">T' .. storage.item.tier .. '</span>'
-                        local i = storage.item
+                end
+            end
+            if (displayType == 0 or displayType == 1) and statusFilterType >= maxFilterType then
+                totalPage = math.ceil(#selectedStorages/elementsByPage)
+                firstStorage = (page - 1) * elementsByPage + 1
+                lastStorage = page * elementsByPage
+                if lastStorage > #selectedStorages then
+                    lastStorage = #selectedStorages
+                end
+                html_table = html_table .. '<div class="hud_container hud_table_container"><div style="text-align:center;border-bottom:1px solid white;">&#x2191; &nbsp;&nbsp; Arrow Up</div><table style="width:100%"><tr><th>&#x2190; &nbsp;&nbsp; Arrow Left</th><th> Page ' .. page .. '/' .. totalPage .. ' (from ' .. firstStorage .. ' to ' .. lastStorage .. ' on ' .. #selectedStorages .. ')</th><th>Arrow Right &nbsp;&nbsp; &#x2192;</th></tr></table><table><tr><th>id</th><th>Storage Name & Type</th><th>Item Name</th><th>Quantity</th><th style="width:100px;">Percent fill</th></tr>'
+                local count = 1
+                if sortingType == 1 then
+                    table.sort(selectedStorages, function(a,b) return a.tableName < b.tableName end)
+                elseif sortingType == 2 then
+                    table.sort(selectedStorages, function(a,b) return a.item.locDisplayNameWithSize < b.item.locDisplayNameWithSize end)
+                elseif sortingType == 3 then
+                    table.sort(selectedStorages, function(a,b) return a.id < b.id end)
+                end
+                for k,storage in pairs(selectedStorages) do
+                    if count >= firstStorage and count <= lastStorage then
+                        local selectedClass = ""
+                        if selectedRow == (count + 1 - firstStorage)then
+                            selectedClass = "row_selected"
+                            selectedStorage = storage
+                        end
+                        local item_name = ""
+                        if storage.item ~= nil and storage.item.name ~= "InvalidItem" then
+                            item_name = storage.item.locDisplayNameWithSize
+                        end
                         local gaugePercent = storage.percent
                         if storage.percent > 100 then
                             gaugePercent = 100
@@ -676,63 +731,18 @@ hud.coroutines.renderStorage = function()
                         r = utils.round(r)
                         g = utils.round(g)
                         b = utils.round(b)
-                        itemBox = [[<hr><div><strong>Item ID:</strong> ]] .. i.id .. [[</div><div><strong>Item Name:</strong> ]] .. i.locDisplayNameWithSize .. [[</div><div><strong>Item Unit Mass:</strong> ]] .. i.unitMass .. [[ kg</div><div><strong>Item Unit Volume:</strong> ]] .. i.unitVolume .. [[ m<sup>3</sup></div>]]
-                        fillGauge = '<div style="position:absolute;bottom:0;left:0px;width:' .. gaugePercent .. '%;background-color:rgb(' .. r .. ',' .. g ..',' .. b .. ');height:3px;z-index:' .. (zindex+1) .. ';"></div>'
+                        html_table = html_table .. '<tr><th class="' .. selectedClass .. '">' .. storage.id .. '</th><th class="' .. selectedClass .. '">' .. storage.tableName .. '<br><small>' .. storage.type .. ' ' .. storage.size .. '</small></th><th class="' .. selectedClass .. '">' .. item_name .. '</th><th class="' .. selectedClass .. '">' .. format_number(utils.round(storage.quantity*100)/100) .. '</th><th class="' .. selectedClass .. '">' .. storage.percent .. '%<br><div style="border:1px solid black;position:relative;height:5px;"><div style="position:absolute;left:0;top:0;width:' .. gaugePercent .. '%;background-color:rgb(' .. r .. ',' .. g ..',' .. b .. ');height:5px;"></div></div></th></tr>'
                     end
-                    html = html .. [[<div class="ib" style="left:]] .. utils.round(storage.screenPos[1]*100) .. [[%;top:]] .. utils.round(storage.screenPos[2]*100) .. [[%;font-size:]] .. font_size .. [[px;z-index:]]..zindex..[[;"><div class="bg-light text-dark" style="padding:2px;padding-bottom:5px;text-transform:capitalize;position:relative;">]] .. tierBox .. [[<strong>]] .. displayName .. [[</strong>]] .. fillGauge .. [[</div>]]
-                    if showDetail then
-                        html = html .. [[<div class="bg-light text-dark" style="margin-top:2px;padding:2px;"><div><strong>Container Type:</strong> ]] .. storage.type .. " " .. storage.size .. [[</div>]] .. itemBox .. [[</div></div>]]
-                    end
-                    html = html .. [[</div>]]
+                    count = count + 1
                 end
+                html_table = html_table .. '</table><table style="width:100%"><tr><th>&#x2190; &nbsp;&nbsp; Arrow Left</th><th> Page ' .. page .. '/' .. totalPage .. ' (from ' .. firstStorage .. ' to ' .. lastStorage .. ' on ' .. #selectedStorages .. ')</th><th>Arrow Right &nbsp;&nbsp; &#x2192;</th></tr></table><div style="text-align:center;border-bottom:1px solid white;">&#x2193; &nbsp;&nbsp; Arrow Down</div></div>'
+                maxPage = totalPage
+                maxOnPage = lastStorage-firstStorage+1
             end
         end
-        if (displayType == 0 or displayType == 1) and statusFilterType >= maxFilterType then
-            totalPage = math.ceil(#selectedStorages/elementsByPage)
-            firstStorage = (page - 1) * elementsByPage + 1
-            lastStorage = page * elementsByPage
-            if lastStorage > #selectedStorages then
-                lastStorage = #selectedStorages
-            end
-            html_table = html_table .. '<div class="hud_container hud_table_container"><div style="text-align:center;border-bottom:1px solid white;">&#x2191; &nbsp;&nbsp; Arrow Up</div><table style="width:100%"><tr><th>&#x2190; &nbsp;&nbsp; Arrow Left</th><th> Page ' .. page .. '/' .. totalPage .. ' (from ' .. firstStorage .. ' to ' .. lastStorage .. ' on ' .. #selectedStorages .. ')</th><th>Arrow Right &nbsp;&nbsp; &#x2192;</th></tr></table><table><tr><th>id</th><th>Storage Name & Type</th><th>Item Name</th><th>Quantity</th><th style="width:100px;">Percent fill</th></tr>'
-            local count = 1
-            if sortingType == 1 then
-                table.sort(selectedStorages, function(a,b) return a.tableName < b.tableName end)
-            elseif sortingType == 2 then
-                table.sort(selectedStorages, function(a,b) return a.item.locDisplayNameWithSize < b.item.locDisplayNameWithSize end)
-            elseif sortingType == 3 then
-                table.sort(selectedStorages, function(a,b) return a.id < b.id end)
-            end
-            for k,storage in pairs(selectedStorages) do
-                if count >= firstStorage and count <= lastStorage then
-                    local selectedClass = ""
-                    if selectedRow == (count + 1 - firstStorage)then
-                        selectedClass = "row_selected"
-                        selectedStorage = storage
-                    end
-                    local item_name = ""
-                    if storage.item ~= nil and storage.item.name ~= "InvalidItem" then
-                        item_name = storage.item.locDisplayNameWithSize
-                    end
-                    local gaugePercent = storage.percent
-                    if storage.percent > 100 then
-                        gaugePercent = 100
-                    end
-                    local r,g,b = getRGBGradient(gaugePercent/100,177,42,42,249,212,123,34,177,76)
-                    r = utils.round(r)
-                    g = utils.round(g)
-                    b = utils.round(b)
-                    html_table = html_table .. '<tr><th class="' .. selectedClass .. '">' .. storage.id .. '</th><th class="' .. selectedClass .. '">' .. storage.tableName .. '<br><small>' .. storage.type .. ' ' .. storage.size .. '</small></th><th class="' .. selectedClass .. '">' .. item_name .. '</th><th class="' .. selectedClass .. '">' .. format_number(utils.round(storage.quantity*100)/100) .. '</th><th class="' .. selectedClass .. '">' .. storage.percent .. '%<br><div style="border:1px solid black;position:relative;height:5px;"><div style="position:absolute;left:0;top:0;width:' .. gaugePercent .. '%;background-color:rgb(' .. r .. ',' .. g ..',' .. b .. ');height:5px;"></div></div></th></tr>'
-                end
-                count = count + 1
-            end
-            html_table = html_table .. '</table><table style="width:100%"><tr><th>&#x2190; &nbsp;&nbsp; Arrow Left</th><th> Page ' .. page .. '/' .. totalPage .. ' (from ' .. firstStorage .. ' to ' .. lastStorage .. ' on ' .. #selectedStorages .. ')</th><th>Arrow Right &nbsp;&nbsp; &#x2192;</th></tr></table><div style="text-align:center;border-bottom:1px solid white;">&#x2193; &nbsp;&nbsp; Arrow Down</div></div>'
-            maxPage = totalPage
-            maxOnPage = lastStorage-firstStorage+1
-        end
+        html_storage = html .. html_table
+        selected_storage = selectedStorage
     end
-    html_storage = html .. html_table
-    selected_storage = selectedStorage
 end
 hud.coroutines.renderFilterStatus = function()
     html_filters = "<style>"
@@ -747,30 +757,32 @@ hud.coroutines.renderFilterStatus = function()
     html_filters = html_filters .. [[<hr class="hr-light"><table style="width:100%;"><tr><td style="padding-left:5px;">&#x2190; &nbsp;&nbsp; Ctrl+Arrow Left</td><td style="text-align:right;padding-right:5px;">Ctrl+Arrow Right &nbsp;&nbsp; &#x2192;</td></tr></table></div>]]
 end
 hud.coroutines.renderFilterType = function()
-    maxFilterType = #elementsTypes
-    if displayMode == 0 then
-        maxFilterType = #elementsTypes + 1
-    elseif displayMode == 2 then
-        maxFilterType = 0
-    end
-    html_filters_types = "<style>"
-    html_filters_types = html_filters_types .. ".bgt" .. (statusFilterType+1) .. "{border: 2px solid #28a745 !important;}"
-    html_filters_types = html_filters_types .. "</style>"
-    html_filters_types = html_filters_types .. '<div class="hud_container hud_machine_types_container" style="text-align:center;"><div>&#x2191; &nbsp;&nbsp; Ctrl+Arrow Up</div><hr class="hr-light">'
-    if displayMode == 0 or displayMode == 1 then
-        html_filters_types = html_filters_types .. '<div class="bgt1" style="margin:5px;">ALL Industries (' .. #industries_id .. ')</div>'
-        for i,v in ipairs(elementsTypes) do
-            html_filters_types = html_filters_types .. '<div class="bgt' .. (i+1) .. '" style="margin:5px;">' .. v .. ' (' .. machines_count[v] .. ')</div>'
+    if displayMode < #displayModes-1 then
+        maxFilterType = #elementsTypes
+        if displayMode == 0 and enableStorageMonitoring then
+            maxFilterType = #elementsTypes + 1
+        elseif displayMode == 2 then
+            maxFilterType = 0
         end
-    end
-    if displayMode == 0 or displayMode == 2 then
-        local bgtclass = 'bgt' .. (#elementsTypes + 2)
-        if displayMode == 2 then
-            bgtclass = 'bgt1'
+        html_filters_types = "<style>.bgt" .. (statusFilterType+1) .. "{border: 2px solid #28a745 !important;}</style>"
+        html_filters_types = html_filters_types .. '<div class="hud_container hud_machine_types_container" style="text-align:center;"><div>&#x2191; &nbsp;&nbsp; Ctrl+Arrow Up</div><hr class="hr-light">'
+        if displayMode == 0 or displayMode == 1 then
+            html_filters_types = html_filters_types .. '<div class="bgt1" style="margin:5px;">ALL Industries (' .. #industries_id .. ')</div>'
+            for i,v in ipairs(elementsTypes) do
+                html_filters_types = html_filters_types .. '<div class="bgt' .. (i+1) .. '" style="margin:5px;">' .. v .. ' (' .. machines_count[v] .. ')</div>'
+            end
         end
-        html_filters_types = html_filters_types .. '<div class="' .. bgtclass .. '" style="margin:5px;">Storage (' .. #storages_id .. ')</div>'
+        if enableStorageMonitoring and (displayMode == 0 or displayMode == 2) then
+            local bgtclass = 'bgt' .. (#elementsTypes + 2)
+            if displayMode == 2 then
+                bgtclass = 'bgt1'
+            end
+            html_filters_types = html_filters_types .. '<div class="' .. bgtclass .. '" style="margin:5px;">Storage (' .. #storages_id .. ')</div>'
+        end
+        html_filters_types = html_filters_types .. '<hr class="hr-light"><div>&#x2193; &nbsp;&nbsp; Ctrl+Arrow Down</div></div>'
+    else
+        html_filters_types = ""
     end
-    html_filters_types = html_filters_types .. '<hr class="hr-light"><div>&#x2193; &nbsp;&nbsp; Ctrl+Arrow Down</div></div>'
 end
 hud.coroutines.renderSelectedAR = function()
     local html = ""
