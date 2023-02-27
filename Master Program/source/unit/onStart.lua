@@ -1,4 +1,4 @@
-version = "v4.3.0"
+version = "v4.4.0"
 --[[
     DU Industry HUD By Jericho
 ]]
@@ -29,6 +29,7 @@ dateFormat = "en" --export: the country code to format the date
 maxAmountOfElementsLoadedByFrame = 500 --export: if cpu load errors at start, lower that value
 machinesRefreshedByFrame = 100 --how many machines are refreshed by frame
 machineDetailDisplayDistance = 0 --export: the distance in meters to display the machine details
+ARMaxDistance = 225 --export: the maximum distance from you in meters to display AR info on machine
 displayType = 0 --export: the default display type: 0=ALL, 1=Table, 2=Augmented Reality
 displayMode = 0 --export: the default display type: 0=ALL, 1=Industry Only, 2=Storage Only, 3=None
 sortingType = 1 --export: the default sorting of elements in table: 1=Element Name, 2=Item in containers or product of industries, 3=Element ID
@@ -603,7 +604,7 @@ hud.coroutines.renderIndustries = function()
             table.sort(selectedIndustries, function(a,b) return a.id < b.id end)
         end
         for k,industry in pairs(selectedIndustries) do
-            if (displayType == 0 or displayType == 2) and industry.screenPos[1] > 0 and industry.screenPos[1] < 1 and industry.screenPos[2] > 0 and industry.screenPos[2] < 1 then
+            if (displayType == 0 or displayType == 2) and industry.screenPos[1] > 0 and industry.screenPos[1] < 1 and industry.screenPos[2] > 0 and industry.screenPos[2] < 1  and industry.screenPos[3] <= ARMaxDistance then
                 local showDetail = false
                 if industry.screenPos[3] <= machineDetailDisplayDistance then
                     showDetail = true
@@ -660,7 +661,7 @@ if enableStorageMonitoring then
             end
             if (displayType == 0 or displayType == 2) then
                 for k,storage in pairs(storages) do
-                    if storage.screenPos[1] > 0 and storage.screenPos[1] < 1 and storage.screenPos[2] > 0 and storage.screenPos[2] < 1 then
+                    if storage.screenPos[1] > 0 and storage.screenPos[1] < 1 and storage.screenPos[2] > 0 and storage.screenPos[2] < 1 and storage.screenPos[3] <= ARMaxDistance then
                         local showDetail = false
                         if storage.screenPos[3] <= machineDetailDisplayDistance then
                             showDetail = true
