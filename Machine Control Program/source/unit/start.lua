@@ -2,7 +2,7 @@
     DU Industry HUD By Jericho
 ]]
 
-local version = "V 4.0.0"
+local version = "V 4.0.1"
 local log_split = "================================================="
 --printing version in lua chat
 system.print(log_split)local a=""local b=math.ceil((50-#version-2)/2)for c=1,b,1 do a=a..'='end;a=a.." "..version.." "for c=1,b,1 do a=a..'='end;system.print(a)system.print(log_split)
@@ -61,7 +61,7 @@ end
 if databank ~= nil then
     for _,slot in pairs(industries) do
         local slot_id = slot.getLocalId()
-        if databank.hasKey(tostring(slot_id)) == 1 then
+        if databank.hasKey(tostring(slot_id)) then
             local command = databank.getStringValue(slot_id)
             if command ~= nil and command ~= "" then
                 if command:lower() == "start" then
